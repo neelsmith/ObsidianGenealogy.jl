@@ -1,2 +1,5 @@
 Manifest.toml
 .vscode/
+_freeze/
+_site/
+.DS_Store

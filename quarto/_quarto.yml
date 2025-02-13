@@ -1,0 +1,30 @@
+project:
+  type: website  
+theme: spacelab
+execute:
+  freeze: auto
+date: last-modified  
+margin-header: "Documentation for unpublished version in development: `0.1.0`"
+format:
+  html: 
+    toc: true
+
+
+website:
+  title: "obsidian"
+  navbar:
+    background: primary
+    search: true
+    left:
+      - text: "Home"
+        file: index.qmd
+      
+    right:   
+      - icon: github
+        href: https://github.com/neelsmith/ObsidianGenealogy.jl
+        aria-label: GitHub
+
+             
+ 
+
+

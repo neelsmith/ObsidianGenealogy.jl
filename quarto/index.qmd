@@ -1,0 +1,7 @@
+---
+engine: julia
+---
+
+# `ObsidianGenealogy.jl`
+
+Package in development.
