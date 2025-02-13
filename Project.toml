@@ -4,11 +4,15 @@ authors = ["Neel Smith  <dnsmith.neel@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Obsidian = "0a1fef19-5aa4-4284-b8c1-c1397acb49d1"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
 [compat]
+DocStringExtensions = "0.9.3"
+Documenter = "1.8.1"
 Obsidian = "0.3"
 Test = "1"
 TestSetExtensions = "2"

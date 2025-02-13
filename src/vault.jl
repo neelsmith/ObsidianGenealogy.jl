@@ -15,22 +15,46 @@ struct GenealogyVault
     end
 end
 
-
-function genealogyVault(f)
-    Vault(f) |> GenealogyVault
+"""Override Base.show for `GenealogyVault`.
+$(SIGNATURES)
+"""
+function show(io::IO, v::GenealogyVault)
+    count = wikinames(v.vault) |> length
+    suffix = count == 1 ? "" : "s"
+    str = string("Genealogical Obsidian vault with $count note$suffix" )
+    show(io,str)
 end
 
-function genealogyVault(v::Vault; docs = "transcriptions", people = "people")
+
+"""Construct a `GenealogyVault` from a directory name.
+$(SIGNATURES)
+"""
+function genealogyVault(dir::AbstractString; docs = "transcriptions", people = "people")
+    GenealogyVault(Vault(dir), docs, people)
+end
+
+
+
+"""Construct a `GenealogyVault` from an Obsidian `Vault`.
+$(SIGNATURES)
+"""
+function genealogyVault(v::Vault;  docs = "transcriptions", people = "people")
     GenealogyVault(v, docs, people)
 end
 
+
+"""Collect list of transcribed documents in a geneaological Obsidian vault.
+$(SIGNATURES)
+"""
 function documents(gv::GenealogyVault)
     filenames = values(gv.vault.filemap) |> collect
     relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)
     docs = filter(f -> startswith(f, gv.documents), relativepaths)
 end
 
-
+"""Collect list of people in a geneaological Obsidian vault.
+$(SIGNATURES)
+"""
 function people(gv::GenealogyVault)
     filenames = values(gv.vault.filemap) |> collect
     relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)

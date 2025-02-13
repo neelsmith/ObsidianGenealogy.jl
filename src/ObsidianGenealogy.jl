@@ -1,6 +1,9 @@
 module ObsidianGenealogy
 
+import Base: show
+
 using Obsidian
+using Documenter, DocStringExtensions
 
 include("vault.jl")
 
