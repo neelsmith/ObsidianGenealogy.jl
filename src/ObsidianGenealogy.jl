@@ -4,6 +4,7 @@ using Obsidian
 
 include("vault.jl")
 
-export GenealogyVault
+export GenealogyVault, genealogyVault
+export documents, people
 
 end # module ObsidianGenealogy
