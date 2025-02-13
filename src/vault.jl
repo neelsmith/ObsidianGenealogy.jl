@@ -60,3 +60,31 @@ function people(gv::GenealogyVault)
     relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)
     docs = filter(f -> startswith(f, gv.people), relativepaths)
 end
+
+
+function birthrecords(gv::GenealogyVault)
+    tripls = gv.vault |> kvtriples
+    births = filter(tripls) do t
+        t.key == "birth"
+    end 
+
+    birthstructure.(births)
+end
+
+function birthstructure(note::NoteKV)
+    split(note.value, "|")
+end
+
+
+function deathrecords(gv::GenealogyVault)
+    tripls = gv.vault |> kvtriples
+    deaths = filter(tripls) do t
+        t.key == "death"
+    end 
+
+    deathstructure.(deaths)
+end
+
+function deathstructure(note::NoteKV)
+    split(note.value, "|")
+end

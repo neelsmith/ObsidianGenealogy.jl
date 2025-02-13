@@ -11,8 +11,8 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
 [compat]
-DocStringExtensions = "0.9.3"
-Documenter = "1.8.1"
+DocStringExtensions = "0.9"
+Documenter = "1"
 Obsidian = "0.3"
 Test = "1"
 TestSetExtensions = "2"
