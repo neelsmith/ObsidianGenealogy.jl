@@ -88,3 +88,17 @@ end
 function deathstructure(note::NoteKV)
     split(note.value, "|")
 end
+
+
+function parentrecords(gv::GenealogyVault)
+    tripls = gv.vault |> kvtriples
+    parents = filter(tripls) do t
+        t.key == "parents"
+    end 
+
+    parentstructure.(parents)
+end
+
+function parentstructure(note::NoteKV)
+    split(note.value, "|")
+end

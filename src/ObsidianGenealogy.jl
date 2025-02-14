@@ -10,5 +10,6 @@ include("vault.jl")
 export GenealogyVault, genealogyVault
 export documents, people
 export birthrecords, deathrecords
+export parentrecords
 
 end # module ObsidianGenealogy
