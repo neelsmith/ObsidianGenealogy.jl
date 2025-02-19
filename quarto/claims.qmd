@@ -16,7 +16,14 @@ repo = pwd() |> dirname
 Use the same toy vault as other examples with notes on a couple of presidents:
 
 ```{julia}
+#| warning: false
 using Obsidian, ObsidianGenealogy
 dir = joinpath(repo,"test", "assets", "presidents-vault")
 genvault = genealogyVault(dir)
+```
+
+## Birth claims
+
+```{julia}
+lincolnbirth = birthrecords(genvault, "Abraham Lincoln")
 ```

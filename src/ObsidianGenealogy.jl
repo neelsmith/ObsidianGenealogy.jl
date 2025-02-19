@@ -6,6 +6,7 @@ using Obsidian
 using Documenter, DocStringExtensions
 
 include("vault.jl")
+include("vitals.jl")
 
 export GenealogyVault, genealogyVault
 export documents, people
