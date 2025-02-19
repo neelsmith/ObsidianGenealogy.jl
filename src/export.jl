@@ -23,7 +23,7 @@ function formatvitals(gv::GenealogyVault, person)
 
     fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
     fatherlink = string("[", tpl.father, "](", fatherrel, ")")
-    
+
     [   
         "*born* $(tpl.birth) : *died* $(tpl.death)",
         "",
@@ -32,6 +32,23 @@ function formatvitals(gv::GenealogyVault, person)
         "**Father**: $(fatherlink)"
     ]
 end
+
+function formatbirthsources(gv, person)
+    pagelines = []
+    push!(pagelines, "## Sources for birth\n\n")
+    birthsrcs = birthrecords(gv, person)
+    push!(pagelines, "| Date | Source | Type |")
+    push!(pagelines, "| --- | --- | --- |")
+    for tpl in birthsrcs
+
+        sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
+        sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
+        sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
+        push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
+    end
+    pagelines
+end
+
 
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
@@ -60,8 +77,16 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     for ln in basicdata
         push!(pagelines, ln)
     end
+    push!(pagelines, "")
 
+    basics = vitals(gv, person)
     
+    if basics.birth != "?"
+        for ln in formatbirthsources(gv, person)
+            push!(pagelines, ln)
+       end
+    end
+    push!(pagelines, "")
 
     
 
