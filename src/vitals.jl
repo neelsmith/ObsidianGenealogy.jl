@@ -10,7 +10,8 @@ function birthrecords(gv::GenealogyVault)
         t.key == "birth"
     end 
 
-    birthstructure.(births)
+    structs = birthstructure.(births)
+    filter(s -> ! isnothing(s), structs)
 end
 
 """Find all birthrecords about a named individual in a vault.
@@ -18,6 +19,7 @@ $(SIGNATURES)
 """
 function birthrecords(gv::GenealogyVault, name)
     wname = Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
+    @info("Look for $(wname)")
     filter(rec -> rec.name == wname, birthrecords(gv))
 end
 

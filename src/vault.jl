@@ -77,3 +77,37 @@ end
 function parentstructure(note::NoteKV)
     split(note.value, "|")
 end
+
+function noteson(gv::GenealogyVault, person)
+    tripls = gv.vault |> kvtriples
+    filter(t -> t.wikiname == person, tripls) 
+end
+
+
+function vitals(gv::GenealogyVault, person)
+    allnotes = noteson(gv, person)
+    birthlist = filter(n -> n.key == "birthdate", allnotes)
+    deathlist = filter(n -> n.key == "deathdate", allnotes)
+    motherlist =  filter(n -> n.key == "mother", allnotes)
+    fatherlist =  filter(n -> n.key == "father", allnotes)
+
+    birth = isempty(birthlist) ? "?" : birthlist[1].value
+    death = isempty(deathlist) ? "?" : deathlist[1].value
+    mother = "?"
+    father = "?"
+
+
+    ## THIS HTML CONVERSION DOES NOT BELONG HERE>
+    if ! isempty(motherlist)
+        motherwikilink = motherlist[1].value
+        motherwiki = replace(motherwikilink, r"[\[\]]" => "")
+        mother = Obsidian.relativelink(gv.vault, person, motherwiki)
+    end
+    if ! isempty(fatherlist)
+        fatherwikilink = fatherlist[1].value
+        fatherwiki = replace(fatherwikilink, r"[\[\]]" => "")
+        father = Obsidian.relativelink(gv.vault, person, fatherwiki)
+    end
+    
+    (birth = birth, death = death, mother = mother, father = father)
+end
