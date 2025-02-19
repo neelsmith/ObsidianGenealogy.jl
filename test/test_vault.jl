@@ -1,6 +1,6 @@
-@testset "Test genealogy vault organizatoin" begin
+@testset "Test genealogy vault organization" begin
     @info(pwd())
-    vaultdir = joinpath(pwd(), "data", "tiny")
+    vaultdir = joinpath(pwd(),  "assets", "tinyvault")
     ovault = Vault(vaultdir)
     gvault = GenealogyVault(ovault, "documents", "people")
     @test gvault isa GenealogyVault
