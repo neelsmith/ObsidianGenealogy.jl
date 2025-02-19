@@ -100,13 +100,13 @@ function vitals(gv::GenealogyVault, person)
     ## THIS HTML CONVERSION DOES NOT BELONG HERE>
     if ! isempty(motherlist)
         motherwikilink = motherlist[1].value
-        motherwiki = replace(motherwikilink, r"[\[\]]" => "")
-        mother = Obsidian.relativelink(gv.vault, person, motherwiki)
+        mother = replace(motherwikilink, r"[\[\]]" => "")
+        #mother = Obsidian.relativelink(gv.vault, person, motherwiki)
     end
     if ! isempty(fatherlist)
         fatherwikilink = fatherlist[1].value
-        fatherwiki = replace(fatherwikilink, r"[\[\]]" => "")
-        father = Obsidian.relativelink(gv.vault, person, fatherwiki)
+        father = replace(fatherwikilink, r"[\[\]]" => "")
+        #father = Obsidian.relativelink(gv.vault, person, fatherwiki)
     end
     
     (birth = birth, death = death, mother = mother, father = father)

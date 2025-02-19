@@ -16,7 +16,22 @@ function exportvault(genvault::GenealogyVault, outdir)
 end
 
 
+function formatvitals(gv::GenealogyVault, person)
+    tpl = vitals(gv, person)
+    motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
+    motherlink = string("[", tpl.mother, "](", motherrel, ")")
 
+    fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
+    fatherlink = string("[", tpl.father, "](", fatherrel, ")")
+    
+    [   
+        "*born* $(tpl.birth) : *died* $(tpl.death)",
+        "",
+        "**Mother**: $(motherlink)",
+        "",
+        "**Father**: $(fatherlink)"
+    ]
+end
 
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
@@ -36,12 +51,17 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     @debug("Dest is $(dest)")
 
-    pagelines = ["---","engine: julia", "---","","", "# $(person)", "", ""]
+    pagelines = ["---","engine: julia", "---","","", ]
 
-    push!(pagelines, "## Page automatically generated")
+    push!(pagelines, "> *Page automatically generated.*")
+    push!(pagelines, "")
+    push!(pagelines,"# $(person)\n\n")#, "", ""   
+    basicdata = formatvitals(gv, person)
+    for ln in basicdata
+        push!(pagelines, ln)
+    end
 
-
-
+    
 
     
 
