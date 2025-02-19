@@ -3,3 +3,4 @@ Manifest.toml
 _freeze/
 _site/
 .DS_Store
+.obsidian

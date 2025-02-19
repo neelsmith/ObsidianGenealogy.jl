@@ -4,4 +4,10 @@ engine: julia
 
 # `ObsidianGenealogy.jl`
 
-Package in development.
+
+
+> *Package in development.*
+
+
+- introduction to [genealogy vaults and their contents](./vaults.qmd)
+

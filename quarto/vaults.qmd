@@ -1,0 +1,49 @@
+---
+engine: julia
+---
+
+# An introduction to genealogy vaults
+
+
+
+```{julia}
+#| echo: false
+#| output: false
+#| warning: false
+repo = pwd() |> dirname
+```
+
+## Create a genealogy vault
+
+A toy vault with notes on a couple of presidents:
+
+```{julia}
+using Obsidian, ObsidianGenealogy
+dir = joinpath(repo,"test", "assets", "presidents-vault")
+genvault = genealogyVault(dir)
+```
+
+## Transcribed primary sources
+
+```{julia}
+docs = documents(genvault)
+```
+
+
+## People identified in the notes
+
+```{julia}
+folks = people(genvault)
+```
+
+## Documented claims
+
+*Documented claims*: a structure that groups a primary source document, an assertion about a specific type of claim, and one or more people involved in the claim.
+
+Here are types of claims that this package currently recognizes:
+
+- birth
+- death 
+- parents
+
+Other types (many) will be added gradually.
