@@ -4,5 +4,19 @@ engine: julia
 
 # Exporting a vault to Quarto
 
-::: {.callout-caution title="TBA"}
-:::
+
+```{julia}
+#| echo: false
+#| output: false
+#| warning: false
+repo = pwd() |> dirname
+```
+
+A toy vault with notes on a couple of presidents:
+
+```{julia}
+using Obsidian, ObsidianGenealogy
+dir = joinpath(repo,"test", "assets", "presidents-vault")
+genvault = genealogyVault(dir)
+```
+
