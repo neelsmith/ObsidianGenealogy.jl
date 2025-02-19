@@ -49,7 +49,8 @@ $(SIGNATURES)
 function documents(gv::GenealogyVault)
     filenames = values(gv.vault.filemap) |> collect
     relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)
-    docs = filter(f -> startswith(f, gv.documents), relativepaths)
+    docpaths = filter(f -> startswith(f, gv.documents), relativepaths)
+    map(doc -> replace(basename(doc), r".md$" => ""), docpaths)
 end
 
 """Collect list of people in a geneaological Obsidian vault.
@@ -58,7 +59,8 @@ $(SIGNATURES)
 function people(gv::GenealogyVault)
     filenames = values(gv.vault.filemap) |> collect
     relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)
-    docs = filter(f -> startswith(f, gv.people), relativepaths)
+    docpaths = filter(f -> startswith(f, gv.people), relativepaths)
+    map(doc -> replace(basename(doc), r".md$" => ""), docpaths)
 end
 
 

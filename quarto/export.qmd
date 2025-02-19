@@ -20,3 +20,8 @@ dir = joinpath(repo,"test", "assets", "presidents-vault")
 genvault = genealogyVault(dir)
 ```
 
+
+```{julia}
+outputdir = joinpath(repo,"scratch","presidents-export")
+exportvault(genvault, outputdir)
+```
