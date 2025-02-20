@@ -19,7 +19,7 @@ $(SIGNATURES)
 """
 function birthrecords(gv::GenealogyVault, name)
     wname = Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
-    @info("Look for $(wname)")
+    @debug("Look for $(wname)")
     filter(rec -> rec.name == wname, birthrecords(gv))
 end
 
@@ -35,6 +35,17 @@ function birthstructure(note::NoteKV)
         @warn("Unable to parse birthstructure in note $(note)")
         nothing
     end
+end
+
+
+"""Find all claims about death for a person.
+
+$(SIGNATURES)
+"""
+function deathrecords(gv::GenealogyVault, person)
+    wname = Obsidian.iswikilink(person) ? person :  string("[[", person, "]]")
+    @debug("Look for $(wname)")
+    filter(rec -> rec.name == wname, deathrecords(gv))
 end
 
 
@@ -58,7 +69,7 @@ $(SIGNATURES)
 """
 function deathstructure(note::NoteKV)
     cols = split(note.value, "|")
-    #=
+    
     if length(cols) == 5
         (name, date, place, source, sourcetype) = cols
         (name = name, date = date, place = place, source = source, sourcetype = sourcetype) 
@@ -66,5 +77,5 @@ function deathstructure(note::NoteKV)
         @warn("Unable to parse birthstructure in note $(note)")
         nothing
     end
-    =#
+    
 end

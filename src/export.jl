@@ -1,3 +1,6 @@
+function htmllink(gv::GenealogyVault, n1, n2)
+    htmllink(gv.vault, n1, n2)
+end
 function htmllink(v::Vault, n1, n2)
     relative = Obsidian.relativelink(v, n1, n2)
     @debug("Link from $(n1) to $(n2) is:")
@@ -5,7 +8,7 @@ function htmllink(v::Vault, n1, n2)
     if isnothing(relative)
         ""
     else
-        relative = replace(relative, "../" => "./")
+        relative = replace(relative, r"^\.\./" => "./")
         nospace = replace(relative, " " => "_")
         replace(nospace, r".md$" => ".html")
     end
@@ -32,7 +35,7 @@ function formatvitals(gv::GenealogyVault, person)
     tpl = vitals(gv, person)
     #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
     motherrel = htmllink(gv.vault, person, tpl.mother)
-    @warn("So link to mother is $(motherrel)")
+    @debug("So link to mother is $(motherrel)")
     motherlink = string("[", tpl.mother, "](", motherrel, ")")
 
     #fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
@@ -65,6 +68,23 @@ function formatbirthsources(gv, person)
     pagelines
 end
 
+
+function formatdeathsources(gv, person)
+    pagelines = []
+    push!(pagelines, "## Sources for death\n\n")
+    deathsrcs = deathrecords(gv, person)
+    push!(pagelines, "| Date | Source | Type |")
+    push!(pagelines, "| --- | --- | --- |")
+    for tpl in deathsrcs
+
+        sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
+        #sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
+        sourcerel  = htmllink(gv.vault, person, sourcewikiname)
+        sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
+        push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
+    end
+    pagelines
+end
 
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
@@ -101,8 +121,15 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
         for ln in formatbirthsources(gv, person)
             push!(pagelines, ln)
        end
+       push!(pagelines, "")
     end
-    push!(pagelines, "")
+    if basics.death != "?"
+        for ln in formatdeathsources(gv, person)
+            push!(pagelines, ln)
+       end
+       push!(pagelines, "")
+    end
+    
 
     
 
