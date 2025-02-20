@@ -90,19 +90,28 @@ end
 function formatparentsources(gv, person)
     pagelines = []
     push!(pagelines, "## Sources for parents\n\n")
-    #=
-    deathsrcs = deathrecords(gv, person)
-    push!(pagelines, "| Date | Source | Type |")
-    push!(pagelines, "| --- | --- | --- |")
-    for tpl in deathsrcs
+   
+    parentsrcs = parentrecords(gv, person)
+    push!(pagelines, "| Father | Mother | Source | Type |")
+    push!(pagelines, "| --- | --- | --- | --- |")
+    for tpl in parentsrcs
 
         sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
-        #sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
         sourcerel  = htmllink(gv.vault, person, sourcewikiname)
         sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
-        push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
+
+
+        fatherwikiname = replace(tpl.father,r"[\[\]]" => "")
+        fatherrel = htmllink(gv.vault, person, fatherwikiname)
+        fatherlink =  string("[", fatherwikiname, "](", fatherrel, ")")
+
+        motherwikiname = replace(tpl.mother,r"[\[\]]" => "")
+        motherrel = htmllink(gv.vault, person, motherwikiname)
+        motherlink =  string("[", motherwikiname, "](", motherrel, ")")
+
+        push!(pagelines, "| $(fatherlink) | $(motherlink) | $(sourcelink) | $(tpl.sourcetype) |")
     end
-    =#
+    
     pagelines
 end
 
@@ -145,6 +154,13 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     if basics.death != "?"
         for ln in formatdeathsources(gv, person)
+            push!(pagelines, ln)
+       end
+       push!(pagelines, "")
+    end
+    
+    if basics.father != "?" || basics.mother != "?"
+        for ln in formatparentsources(gv, person)
             push!(pagelines, ln)
        end
        push!(pagelines, "")
