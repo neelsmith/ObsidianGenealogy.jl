@@ -31,8 +31,8 @@ function exportvault(genvault::GenealogyVault, outdir)
 end
 
 
-function formatvitals(gv::GenealogyVault, person)
-    tpl = vitals(gv, person)
+function formatconclusions(gv::GenealogyVault, person)
+    tpl = conclusions(gv, person)
     #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
     motherrel = htmllink(gv.vault, person, tpl.mother)
     @debug("So link to mother is $(motherrel)")
@@ -138,13 +138,13 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     push!(pagelines, "> *Page automatically generated.*")
     push!(pagelines, "")
     push!(pagelines,"# $(person)\n\n")#, "", ""   
-    basicdata = formatvitals(gv, person)
+    basicdata = formatconclusions(gv, person)
     for ln in basicdata
         push!(pagelines, ln)
     end
     push!(pagelines, "")
 
-    basics = vitals(gv, person)
+    basics = conclusions(gv, person)
     
     if basics.birth != "?"
         for ln in formatbirthsources(gv, person)

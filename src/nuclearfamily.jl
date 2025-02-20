@@ -26,3 +26,11 @@ function parentstructure(note::NoteKV)
         nothing
     end
 end
+
+
+function childrecords(gv::GenealogyVault, name)
+    wname = Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
+    @debug("Look for $(wname)")
+    filter(rec -> rec.father == wname || rec.mother == wname, parentrecords(gv))
+end
+

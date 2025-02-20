@@ -72,7 +72,7 @@ function noteson(gv::GenealogyVault, person)
 end
 
 
-function vitals(gv::GenealogyVault, person)
+function conclusions(gv::GenealogyVault, person)
     allnotes = noteson(gv, person)
     birthlist = filter(n -> n.key == "birthdate", allnotes)
     deathlist = filter(n -> n.key == "deathdate", allnotes)
