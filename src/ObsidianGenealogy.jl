@@ -19,6 +19,7 @@ export birthrecords, deathrecords
 export parentrecords, childrecords
 
 export noteson, vitals
+export conclusions
 
 export exportvault
 

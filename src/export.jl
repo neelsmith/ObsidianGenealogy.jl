@@ -31,6 +31,15 @@ function exportvault(genvault::GenealogyVault, outdir)
 end
 
 
+function hasconclusions(record)
+    noconclusions = record.birth == "?" && 
+    record.death  == "?" &&
+    record.mother  == "?" &&
+    record.father  == "?"
+
+    ! noconclusions
+end
+
 function formatconclusions(gv::GenealogyVault, person)
     tpl = conclusions(gv, person)
     #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
@@ -53,7 +62,6 @@ end
 
 function formatbirthsources(gv, person)
     pagelines = []
-    push!(pagelines, "## Sources for birth\n\n")
     birthsrcs = birthrecords(gv, person)
     push!(pagelines, "| Date | Source | Type |")
     push!(pagelines, "| --- | --- | --- |")
@@ -71,7 +79,6 @@ end
 
 function formatdeathsources(gv, person)
     pagelines = []
-    push!(pagelines, "## Sources for death\n\n")
     deathsrcs = deathrecords(gv, person)
     push!(pagelines, "| Date | Source | Type |")
     push!(pagelines, "| --- | --- | --- |")
@@ -89,7 +96,7 @@ end
 
 function formatparentsources(gv, person)
     pagelines = []
-    push!(pagelines, "## Sources for parents\n\n")
+    
    
     parentsrcs = parentrecords(gv, person)
     push!(pagelines, "| Father | Mother | Source | Type |")
@@ -144,15 +151,22 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     push!(pagelines, "")
 
+
+
     basics = conclusions(gv, person)
     
+    if hasconclusions(basics)
+        push!(pagelines, "## Sources")
+
     if basics.birth != "?"
+        push!(pagelines, "Sources for birth:\n\n")
         for ln in formatbirthsources(gv, person)
             push!(pagelines, ln)
        end
        push!(pagelines, "")
     end
     if basics.death != "?"
+        push!(pagelines, "Sources for death:\n\n")
         for ln in formatdeathsources(gv, person)
             push!(pagelines, ln)
        end
@@ -160,11 +174,15 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     
     if basics.father != "?" || basics.mother != "?"
+        push!(pagelines, "## Sources for parents:\n\n")
         for ln in formatparentsources(gv, person)
             push!(pagelines, ln)
        end
        push!(pagelines, "")
     end
+    
+
+    children = map(rec -> rec.name, childrecords(gv, person))
     
 
     
