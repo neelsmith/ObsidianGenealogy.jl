@@ -1,0 +1,15 @@
+---
+engine: julia
+---
+
+# Claims and conclusions
+
+*Conclusions* are a documented with a specified set of `dataview` properties:
+
+- birth
+- death
+- mother
+- father
+
+
+*Claims* present evident supporting some value for a conclusion.
