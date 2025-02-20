@@ -1,7 +1,14 @@
 function htmllink(v::Vault, n1, n2)
     relative = Obsidian.relativelink(v, n1, n2)
-    nospace = replace(relative, " " => "_")
-    replace(nospace, r".md$" => ".html")
+    @debug("Link from $(n1) to $(n2) is:")
+    @debug(relative)
+    if isnothing(relative)
+        ""
+    else
+        relative = replace(relative, "../" => "./")
+        nospace = replace(relative, " " => "_")
+        replace(nospace, r".md$" => ".html")
+    end
 end
 
 """Export a `GenealogyVault`.
@@ -25,6 +32,7 @@ function formatvitals(gv::GenealogyVault, person)
     tpl = vitals(gv, person)
     #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
     motherrel = htmllink(gv.vault, person, tpl.mother)
+    @warn("So link to mother is $(motherrel)")
     motherlink = string("[", tpl.mother, "](", motherrel, ")")
 
     #fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
