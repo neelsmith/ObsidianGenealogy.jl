@@ -86,6 +86,26 @@ function formatdeathsources(gv, person)
     pagelines
 end
 
+
+function formatparentsources(gv, person)
+    pagelines = []
+    push!(pagelines, "## Sources for parents\n\n")
+    #=
+    deathsrcs = deathrecords(gv, person)
+    push!(pagelines, "| Date | Source | Type |")
+    push!(pagelines, "| --- | --- | --- |")
+    for tpl in deathsrcs
+
+        sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
+        #sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
+        sourcerel  = htmllink(gv.vault, person, sourcewikiname)
+        sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
+        push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
+    end
+    =#
+    pagelines
+end
+
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
 """

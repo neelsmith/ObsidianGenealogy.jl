@@ -65,18 +65,6 @@ end
 
 
 
-function parentrecords(gv::GenealogyVault)
-    tripls = gv.vault |> kvtriples
-    parents = filter(tripls) do t
-        t.key == "parents"
-    end 
-
-    parentstructure.(parents)
-end
-
-function parentstructure(note::NoteKV)
-    split(note.value, "|")
-end
 
 function noteson(gv::GenealogyVault, person)
     tripls = gv.vault |> kvtriples
