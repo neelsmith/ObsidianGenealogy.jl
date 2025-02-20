@@ -1,3 +1,8 @@
+function htmllink(v::Vault, n1, n2)
+    relative = Obsidian.relativelink(v, n1, n2)
+    nospace = replace(relative, " " => "_")
+    replace(nospace, r".md$" => ".html")
+end
 
 """Export a `GenealogyVault`.
 $(SIGNATURES)
@@ -18,10 +23,12 @@ end
 
 function formatvitals(gv::GenealogyVault, person)
     tpl = vitals(gv, person)
-    motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
+    #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
+    motherrel = htmllink(gv.vault, person, tpl.mother)
     motherlink = string("[", tpl.mother, "](", motherrel, ")")
 
-    fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
+    #fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
+    fatherrel = htmllink(gv.vault, person, tpl.father)
     fatherlink = string("[", tpl.father, "](", fatherrel, ")")
 
     [   
@@ -42,7 +49,8 @@ function formatbirthsources(gv, person)
     for tpl in birthsrcs
 
         sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
-        sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
+        #sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
+        sourcerel  = htmllink(gv.vault, person, sourcewikiname)
         sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
         push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
     end
