@@ -176,7 +176,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     
     if basics.father != "?" || basics.mother != "?"
-        push!(pagelines, "## Sources for parents:\n\n")
+        push!(pagelines, "Sources for parents:\n\n")
         for ln in formatparentsources(gv, person)
             push!(pagelines, ln)
        end
