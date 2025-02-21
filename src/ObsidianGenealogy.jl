@@ -7,8 +7,9 @@ using Documenter, DocStringExtensions
 
 
 
-include("utils.jl")
+
 include("vault.jl")
+include("utils.jl")
 include("conclusions.jl")
 include("nuclearfamily.jl")
 include("evidence.jl")
