@@ -16,7 +16,9 @@ function exportvault(genvault::GenealogyVault, outdir)
     
 end
 
-
+"""True if one or more vital records in a tuple has some valid data.
+$(SIGNATURES)
+"""
 function hasconclusions(record)
     noconclusions = record.birth == "?" && 
     record.death  == "?" &&
@@ -26,6 +28,11 @@ function hasconclusions(record)
     ! noconclusions
 end
 
+
+
+"""Format a Markdown display of documented conclusions for a person.
+$(SIGNATURES)
+"""
 function formatconclusions(gv::GenealogyVault, person)
     tpl = conclusions(gv, person)
     #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
@@ -46,18 +53,22 @@ function formatconclusions(gv::GenealogyVault, person)
     ]
 end
 
+
+"""Format a Markdown display of documentation of birth for a person.
+$(SIGNATURES)
+"""
 function formatbirthsources(gv, person)
     pagelines = []
     birthsrcs = birthrecords(gv, person)
-    push!(pagelines, "| Date | Source | Type |")
-    push!(pagelines, "| --- | --- | --- |")
+    push!(pagelines, "| Date | Source | Place | Type |")
+    push!(pagelines, "| --- | --- | --- | --- |")
     for tpl in birthsrcs
 
-        sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
+        sourcewikiname = dewikify(tpl.source) #replace(tpl.source,r"[\[\]]" => "")
         #sourcerel  = Obsidian.relativelink(gv.vault, person, sourcewikiname)
         sourcerel  = htmllink(gv.vault, person, sourcewikiname)
         sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
-        push!(pagelines, "| $(tpl.date) | $(sourcelink) | $(tpl.sourcetype) |")
+        push!(pagelines, "| $(tpl.date) | $(tpl.place) | $(sourcelink) | $(tpl.sourcetype) |")
     end
     pagelines
 end
@@ -144,11 +155,12 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     if ! isempty(spice)
         for spouse in spice
             
-            push!(pagelines, "**Children with $(spouse)**")
+            push!(pagelines, "**Children with $(htmllinkedstring(gv, person, spouse))**:")
             push!(pagelines, "\n")
-            kids = childrecords(gv, person, spouse)
+            kids = childrecords(gv, person, dewikify(spouse))
+            @info("For $(person) and $(spouse), work with these kids $(kids)")
             for kid in kids
-                item = string("- ", kid.name, "\n")
+                item = string("- ", htmllinkedstring(gv, person, kid.name), "\n")
                 push!(pagelines, item)
             end
         end
@@ -188,16 +200,25 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
 
     if ! isempty(spice)
         
-        for rec in spice
+        for spouse in spice
+            push!(pagelines, "Sources for children with $(htmllinkedstring(gv, person, spouse))")
+            push!(pagelines, "\n")
+            kids = childrecords(gv, person, dewikify(spouse))
+            for rec in kids     
+                item = string("- ", htmllinkedstring(gv, person, rec.source), "\n")
+                push!(pagelines, item)
+            end
+            push!(pagelines, "\n")
+
             #=
             push!(pagelines, "Sources for children with $(spice):\n\n")
             kids = childrecords(gv, person, spouse)
             for rec in kids
-                item = string("- ", rec.source, "\n")
+            
                 push!(pagelines, item)
             end
             push!(pagelines, "\n")
-=#
+            =#
         end
     end
 
