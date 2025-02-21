@@ -52,10 +52,9 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
 
             push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
             push!(edges, "$(nodelabel(spouse)) --> $(mrg)[ ]")
-            @info("Need child records for $(person) and $(spouse)")
             kids = childrecords(gv, person, dewikify(spouse))
             for kid in kids
-                @info("Linking $(mrg) to $(dewikify(kid.name))")
+                @debug("Linking $(mrg) to $(dewikify(kid.name))")
                 push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
                 descendant_edges!(gv, kid.name, edges)
             end

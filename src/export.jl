@@ -157,7 +157,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
             push!(pagelines, "**Children with $(htmllinkedstring(gv, person, spouse))**:")
             push!(pagelines, "\n")
             kids = childrecords(gv, person, dewikify(spouse))
-            @info("For $(person) and $(spouse), work with these kids $(kids)")
+            @debug("For $(person) and $(spouse), work with these kids $(kids)")
             for kid in kids
                 item = string("- ", htmllinkedstring(gv, person, kid.name), "\n")
                 push!(pagelines, item)

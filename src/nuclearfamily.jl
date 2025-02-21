@@ -56,7 +56,6 @@ function mother(gv, name)
 end
 
 function childrecords(gv::GenealogyVault, name)
-    @info("Get child records for $(name)")
     wname = wikify(name) #Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
     @debug("Look for $(wname)")
     filter(rec -> rec.father == wname || rec.mother == wname, parentrecords(gv))
