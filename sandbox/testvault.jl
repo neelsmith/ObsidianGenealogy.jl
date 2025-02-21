@@ -22,3 +22,4 @@ dude = "Horatio Nelson White"
 
 
 destdir = "/Users/nsmith/Desktop/famhist/quart-personal/familyhistory/sources"
+destdir = "/Users/nsmith/Desktop/family-site/quart-personal/familyhistory/sources"
