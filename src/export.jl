@@ -1,21 +1,35 @@
 
+function publicexport(gv::GenealogyVault, outdir)
+    for person in people(genvault)
+        @debug("Make page for $(person)")
+        if deceased(genvault, person)
+            makepersonpage(gv, person,outdir)
+        else
+            placeholderpage(gv, person, outdir)
+        end
+    end
+end
+
+function privateexport(gv::GenealogyVault, outdir)
+    for person in people(gv)
+        @debug("Make page for $(person)")
+        makepersonpage(gv, person,outdir)
+    end
+end
 
 """Export a `GenealogyVault`.
 $(SIGNATURES)
 """
-function exportvault(genvault::GenealogyVault, outdir)
+function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
    
     for doc in documents(genvault)
         exportmd(genvault.vault, doc, outdir)   
     end
     
-    for person in people(genvault)
-        @debug("Make page for $(person)")
-        if deceased(genvault, person)
-            makepersonpage(genvault, person,outdir)
-        else
-            placeholderpage(genvault, person, outdir)
-        end
+    if publiconly
+        publicexport(genvault, outdir)
+    else
+        privateexport(genvault, outdir)
     end
     
 end
