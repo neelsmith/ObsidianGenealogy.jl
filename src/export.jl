@@ -11,12 +11,39 @@ function exportvault(genvault::GenealogyVault, outdir)
     
     for person in people(genvault)
         @debug("Make page for $(person)")
-        makepersonpage(genvault, person,outdir)
+        if deceased(genvault, person)
+            makepersonpage(genvault, person,outdir)
+        else
+            placeholderpage(genvault, person, outdir)
+        end
     end
     
 end
 
+function placeholderpage(gv, person, outputdir)
+    srcpath = path(gv.vault, person; relative = true) 
+    dest = joinpath(outputdir, srcpath)
 
+    qmd = replace(dest, r".md$" => ".qmd")
+    dest = replace(qmd, " " => "_")
+    destdir = dirname(dest)
+    if ! isdir(destdir)
+        mkpath(destdir)
+    end
+    @debug("Dest is $(dest)")
+
+    pagelines = ["---","engine: julia", "---","","", ]
+
+
+    push!(pagelines,"# $(person)\n\n")
+    push!(pagelines, "\n")
+    push!(pagelines, "Private information: $(person) not identified as deceased.")
+    pagetext = join(pagelines, "\n")
+
+    open(dest, "w") do io
+        write(io, pagetext)
+    end 
+end
 
 
 """Format a Markdown display of documented conclusions for a person.

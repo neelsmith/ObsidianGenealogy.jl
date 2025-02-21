@@ -27,3 +27,10 @@ genvault = genealogyVault(dir)
 ```{julia}
 lincolnbirth = birthrecords(genvault, "Abraham Lincoln")
 ```
+
+
+## Death claims
+
+```{julia}
+lincolndeath = deathrecords(genvault, "Abraham Lincoln")
+```

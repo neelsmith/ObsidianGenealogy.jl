@@ -26,7 +26,7 @@ export parentrecords, childrecords, partners
 export father, mother
 
 export noteson, vitals
-export conclusions
+export conclusions, evidenceforconclusion, validconclusion
 
 export exportvault
 

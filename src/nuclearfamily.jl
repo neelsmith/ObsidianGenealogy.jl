@@ -1,3 +1,6 @@
+function deceased(gv, person)
+    "#deceased" in tags(gv.vault, person)
+end
 
 function parentrecords(gv::GenealogyVault)
     tripls = gv.vault |> kvtriples
