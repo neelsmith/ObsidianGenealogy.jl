@@ -5,6 +5,9 @@ import Base: show
 using Obsidian
 using Documenter, DocStringExtensions
 
+
+
+include("utils.jl")
 include("vault.jl")
 include("conclusions.jl")
 include("nuclearfamily.jl")
@@ -16,11 +19,13 @@ export GenealogyVault, genealogyVault
 export documents, people
 
 export birthrecords, deathrecords
-export parentrecords, childrecords
+export parentrecords, childrecords, partners
 
 export noteson, vitals
 export conclusions
 
 export exportvault
+
+export wikify, dewikify
 
 end # module ObsidianGenealogy

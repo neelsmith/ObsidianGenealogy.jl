@@ -34,3 +34,19 @@ function childrecords(gv::GenealogyVault, name)
     filter(rec -> rec.father == wname || rec.mother == wname, parentrecords(gv))
 end
 
+function childrecords(gv::GenealogyVault, parent1, parent2)
+    wikiform1 = "[[" * parent1 * "]]"
+    wikiform2 = "[[" * parent2 * "]]"
+    filter(parentrecords(gv)) do rec
+        (rec.father == wikiform1 && rec.mother  == wikiform2) ||
+        (rec.father == wikiform2 && rec.mother  == wikiform1)
+    end
+end
+
+
+function partners(gv::GenealogyVault, name)
+    wikiform = "[[" * name * "]]"
+    map(childrecords(gv, name)) do rec
+        rec.father == wikiform ? rec.mother : rec.father
+    end |> unique
+end

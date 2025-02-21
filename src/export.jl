@@ -1,6 +1,8 @@
 function htmllink(gv::GenealogyVault, n1, n2)
     htmllink(gv.vault, n1, n2)
 end
+
+
 function htmllink(v::Vault, n1, n2)
     relative = Obsidian.relativelink(v, n1, n2)
     @debug("Link from $(n1) to $(n2) is:")
@@ -154,6 +156,22 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     push!(pagelines, "")
 
 
+    spice = partners(gv, person)
+    if ! isempty(spice)
+        for spouse in spice
+            
+            push!(pagelines, "**Children with $(spouse)**")
+            push!(pagelines, "\n")
+            kids = childrecords(gv, person, spouse)
+            for kid in kids
+                item = string("- ", kid.name, "\n")
+                push!(pagelines, item)
+            end
+        end
+        push!(pagelines, "\n")
+    end
+
+
    
     basics = conclusions(gv, person)
     
@@ -184,8 +202,20 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     
 
-    children = map(rec -> rec.name, childrecords(gv, person))
-    
+    if ! isempty(spice)
+        
+        for rec in spice
+            #=
+            push!(pagelines, "Sources for children with $(spice):\n\n")
+            kids = childrecords(gv, person, spouse)
+            for rec in kids
+                item = string("- ", rec.source, "\n")
+                push!(pagelines, item)
+            end
+            push!(pagelines, "\n")
+=#
+        end
+    end
 
     
 
