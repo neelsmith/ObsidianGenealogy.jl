@@ -122,6 +122,8 @@ function formatparentsources(gv, person)
     pagelines
 end
 
+
+
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
 """
@@ -131,7 +133,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     @debug("Source path is $(srcpath)")
     dest = joinpath(outputdir, srcpath)
     @debug("Yielding $(dest)")
-    
+
     qmd = replace(dest, r".md$" => ".qmd")
     dest = replace(qmd, " " => "_")
     destdir = dirname(dest)
@@ -152,12 +154,12 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     push!(pagelines, "")
 
 
-
+   
     basics = conclusions(gv, person)
     
     if hasconclusions(basics)
         push!(pagelines, "## Sources")
-
+    end
     if basics.birth != "?"
         push!(pagelines, "Sources for birth:\n\n")
         for ln in formatbirthsources(gv, person)
@@ -192,6 +194,5 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
 
     open(dest, "w") do io
         write(io, pagetext)
-    end
-    
+    end   
 end
