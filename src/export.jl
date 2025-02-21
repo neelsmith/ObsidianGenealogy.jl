@@ -1,8 +1,8 @@
 
 function publicexport(gv::GenealogyVault, outdir)
-    for person in people(genvault)
+    for person in people(gv)
         @debug("Make page for $(person)")
-        if deceased(genvault, person)
+        if deceased(gv, person)
             makepersonpage(gv, person,outdir)
         else
             placeholderpage(gv, person, outdir)
