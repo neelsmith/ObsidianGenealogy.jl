@@ -127,9 +127,7 @@ $(SIGNATURES)
 function makepersonpage(gv::GenealogyVault, person, outputdir)
 
     srcpath = path(gv.vault, person; relative = true) 
-    @debug("Source path is $(srcpath)")
     dest = joinpath(outputdir, srcpath)
-    @debug("Yielding $(dest)")
 
     qmd = replace(dest, r".md$" => ".qmd")
     dest = replace(qmd, " " => "_")
@@ -137,6 +135,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     if ! isdir(destdir)
         mkpath(destdir)
     end
+
     @debug("Dest is $(dest)")
 
     pagelines = ["---","engine: julia", "---","","", ]
@@ -168,8 +167,27 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
 
 
-   
+
     basics = conclusions(gv, person)
+
+    if basics.father != "?" || basics.mother != "?"
+        push!(pagelines, "Documented ancestors:\n")
+        ancdiagram = ancestordiagram(gv, person) |> wrapmermaid
+        for ln in split(ancdiagram, "\n")
+            push!(pagelines, ln)
+        end
+        push!(pagelines, "\n")
+    end
+   
+    if ! isempty(spice)
+        push!(pagelines, "Documented descendants:\n")
+        descdiagram = descendantdiagram(gv, person) |> wrapmermaid
+        for ln in split(descdiagram, "\n")
+            push!(pagelines, ln)
+        end
+        push!(pagelines, "\n")
+    end
+    
     
     if hasconclusions(basics)
         push!(pagelines, "## Sources")
@@ -209,16 +227,6 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
                 push!(pagelines, item)
             end
             push!(pagelines, "\n")
-
-            #=
-            push!(pagelines, "Sources for children with $(spice):\n\n")
-            kids = childrecords(gv, person, spouse)
-            for rec in kids
-            
-                push!(pagelines, item)
-            end
-            push!(pagelines, "\n")
-            =#
         end
     end
 

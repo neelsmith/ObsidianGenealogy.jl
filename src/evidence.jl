@@ -9,6 +9,7 @@ function father(gv::GenealogyVault)
     fatherstructure.(fathers)
 end
 
+#=
 function father(gv::GenealogyVault, person)
     #filter(t ->  father(gv))
 end
@@ -17,3 +18,4 @@ end
 function fatherstructure(note::NoteKV)
     split(note.value, "|")
 end
+=#

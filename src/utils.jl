@@ -1,11 +1,15 @@
 
 
 function wikify(s)
+    @debug("wikify $(s)")
     Obsidian.iswikilink(s) ? s : string("[[", s, "]]")
 end
 
 function dewikify(s)
-    replace(s, r"[\[\]]" => "")
+    
+    replaced = replace(s, r"[\[\]]" => "")
+    @debug("Dewikify $(s) to $(replaced)")
+    replaced
 end
 
 

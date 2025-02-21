@@ -27,9 +27,37 @@ function parentstructure(note::NoteKV)
     end
 end
 
+function father(gv, name)
+    @debug("Find parents for $(name)")
+    recc = parentrecords(gv, name)
+
+    if isempty(recc)
+        nothing
+    else
+        @debug("Look at $(recc)")
+        fathervalues = map(rec -> rec.father, recc) |> unique
+        nonempties = filter(n -> !isempty(n), fathervalues)
+        isempty(nonempties) ? nothing : dewikify(nonempties[1])
+    end
+end
+
+function mother(gv, name)
+    @debug("Find parents for $(name)")
+    recc = parentrecords(gv, name)
+
+    if isempty(recc)
+        nothing
+    else
+        @debug("Look at $(recc)")
+        mothervalues = map(rec -> rec.mother, recc) |> unique
+        nonempties = filter(n -> !isempty(n), mothervalues)
+        isempty(nonempties) ? nothing : dewikify(nonempties[1])
+    end
+end
 
 function childrecords(gv::GenealogyVault, name)
-    wname = Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
+    @info("Get child records for $(name)")
+    wname = wikify(name) #Obsidian.iswikilink(name) ? name :  string("[[", name, "]]")
     @debug("Look for $(wname)")
     filter(rec -> rec.father == wname || rec.mother == wname, parentrecords(gv))
 end
@@ -45,8 +73,8 @@ end
 
 
 function partners(gv::GenealogyVault, name)
-    wikiform = "[[" * name * "]]"
+    
     map(childrecords(gv, name)) do rec
-        rec.father == wikiform ? rec.mother : rec.father
+        rec.father == wikify(name) ? rec.mother : rec.father
     end |> unique
 end
