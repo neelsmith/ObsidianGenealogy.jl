@@ -16,17 +16,6 @@ function exportvault(genvault::GenealogyVault, outdir)
     
 end
 
-"""True if one or more vital records in a tuple has some valid data.
-$(SIGNATURES)
-"""
-function hasconclusions(record)
-    noconclusions = record.birth == "?" && 
-    record.death  == "?" &&
-    record.mother  == "?" &&
-    record.father  == "?"
-
-    ! noconclusions
-end
 
 
 

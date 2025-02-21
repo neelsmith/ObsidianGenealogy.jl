@@ -64,38 +64,26 @@ function people(gv::GenealogyVault)
 end
 
 
-
-
 function noteson(gv::GenealogyVault, person)
     tripls = gv.vault |> kvtriples
     filter(t -> t.wikiname == person, tripls) 
 end
 
 
-function conclusions(gv::GenealogyVault, person)
-    allnotes = noteson(gv, person)
-    birthlist = filter(n -> n.key == "birthdate", allnotes)
-    deathlist = filter(n -> n.key == "deathdate", allnotes)
-    motherlist =  filter(n -> n.key == "mother", allnotes)
-    fatherlist =  filter(n -> n.key == "father", allnotes)
+function fatherlist(gv::GenealogyVault)
+    tripls = gv.vault |> kvtriples
+    fathers = filter(tripls) do t
+        t.key == "father"
+    end 
 
-    birth = isempty(birthlist) ? "?" : birthlist[1].value
-    death = isempty(deathlist) ? "?" : deathlist[1].value
-    mother = "?"
-    father = "?"
+    fatherstructure.(fathers)
+end
 
+function motherlist(gv::GenealogyVault)
+    tripls = gv.vault |> kvtriples
+    mothers = filter(tripls) do t
+        t.key == "mother"
+    end 
 
-    ## THIS HTML CONVERSION DOES NOT BELONG HERE>
-    if ! isempty(motherlist)
-        motherwikilink = motherlist[1].value
-        mother = replace(motherwikilink, r"[\[\]]" => "")
-        #mother = Obsidian.relativelink(gv.vault, person, motherwiki)
-    end
-    if ! isempty(fatherlist)
-        fatherwikilink = fatherlist[1].value
-        father = replace(fatherwikilink, r"[\[\]]" => "")
-        #father = Obsidian.relativelink(gv.vault, person, fatherwiki)
-    end
-    
-    (birth = birth, death = death, mother = mother, father = father)
+    motherstructure.(mothers)
 end
