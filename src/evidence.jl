@@ -184,10 +184,13 @@ end
 
 
 
-function validateconclusions(gv)
+function invalidconclusions(gv; publishedonly = false)
     # do for every individual in vault
     badconclusions = []
-    for person in people(gv)
+    folks = people(gv)
+    peoplelist = publishedonly ? filter(person -> ObsidianGenealogy.deceased(gv, person), folks) : folks
+
+    for person in peoplelist
         for invalid in invalidconclusions(gv, person)
             push!(badconclusions, invalid)
         end
