@@ -22,7 +22,40 @@ end
 $(SIGNATURES)
 """
 function lastnameindex(gv::GenealogyVault, outdir)
-    tags(gv.vault, "#lastname")
+    #tags(gv.vault, "#lastname")
+    pagelist = gv.vault.intags["#lastname"] |> sort
+    destdir = joinpath(outdir,"last-names")
+    if ! isdir(destdir)
+        mkpath(destdir)
+        @info("Created new directory $(destdir)")
+    end
+    for pg in pagelist
+        pagetext = composenameindex(gv, pg)
+        pagefile = joinpath(destdir, string(pg, ".qmd"))
+        open(pagefile, "w") do io
+            write(io, pagetext)
+        end
+    end
+end
+
+
+function composenameindex(gv::GenealogyVault, lastname)
+    pagelines = ["---", "engine: julia", "---", ""]
+    push!(pagelines, "# $(lastname)\n")
+    
+    if haskey(gv.vault.inlinks, lastname)
+        for lnk in sort(gv.vault.inlinks[lastname])
+            target = htmllinkedstring(gv, lastname, lnk)
+            push!(pagelines, string("- ", target))
+        end
+    else
+        push!(pagelines, "::: {.callout-caution}")
+        push!(pagelines, "Index missing for $(lastname)")
+        push!(pagelines, ":::")
+
+    end
+
+    join(pagelines, "\n")
 end
 
 """Export a `GenealogyVault`.
