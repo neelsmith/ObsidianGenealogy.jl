@@ -36,6 +36,19 @@ function lastnameindex(gv::GenealogyVault, outdir)
             write(io, pagetext)
         end
     end
+
+
+    indexheader = "---\nengine: julia\n---\n\n# Last names\n\n"
+    indexpageitems = map(pagelist) do pg
+        string("- [$(pg)](./$(pg).html)")
+    end
+    indexfile = joinpath(destdir, "index.qmd")
+    #@info("INdex file is $(indexfile)")
+    indexcontents = indexheader * join(indexpageitems,"\n")
+    open(indexfile,"w") do io
+        write(io, indexcontents)
+    end
+
 end
 
 
