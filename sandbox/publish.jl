@@ -6,7 +6,6 @@ gv = Vault(vaultdir) |> genealogyVault
 
 # Publish public:
 destdir = "/Users/nsmith/Desktop/family-site/quart-personal/familyhistory/sources"
-
 exportvault(gv, destdir)
 
 # Publish private:

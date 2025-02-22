@@ -1,31 +1,27 @@
 
-function buildindexfiles(dir)
+function buildindexfiles(dir, outroot)
+    @info("Build index for $(dir)")
     items = ["---", "engine: julia", "---", "", "# Index", ""]
     for name in readdir(dir)
         fullpath = joinpath(dir, name)
         if isdir(fullpath)
             @debug("Descend dir $(name) later...")
-            #buildindexfiles(fullpath)
-        elseif endswith(name, ".md")
+           
+        elseif endswith(name, ".qmd") || endswith(name, ".md")
             @debug("index MD file $(name)")
-            renamed = replace(replace(name, "_" => " "), r".md$" => "")
-            target = replace(name, r".md$" => ".html")
+            renamed = replace(replace(name, "_" => " "), r".q?md$" => "")
+            target = replace(name, r".q?md$" => ".html")
             push!(items, string("- [$(renamed)](./$(target))"))
         end
-        
-
-
-       
     end
-
-
 
     subdirs = []
     for name in readdir(dir)
         fullpath = joinpath(dir, name)
+        outpath = joinpath(outroot, name)
         if isdir(fullpath)
             @debug("Descending dir $(name) later...")
-            buildindexfiles(fullpath)
+            buildindexfiles(fullpath, outpath)
             push!(subdirs, name)
         end
     end
@@ -41,7 +37,7 @@ function buildindexfiles(dir)
     open(indexfile,"w") do io
         write(io, join(items, "\n"))
     end
-    @info("Wrote $(indexfile)")
+    #@info("Wrote $(indexfile)")
 end
 
 
@@ -122,7 +118,6 @@ end
 $(SIGNATURES)
 """
 function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
-   
     for doc in documents(genvault)
         exportmd(genvault.vault, doc, outdir)   
     end
@@ -135,8 +130,12 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
 
     # add index of last names
     lastnameindex(genvault, outdir)
+ 
     # add indices to transcriptions:
-    buildindexfiles(joinpath(genvault.vault.root, "transcriptions"))    
+    xcrsroot = joinpath(genvault.vault.root, "transcriptions")
+    xcrsoutput = joinpath(outdir, "transcriptions")
+    @warn("Add indices to $(xcrsroot)")
+    buildindexfiles(xcrsroot, xcrsoutput)
     
 end
 
