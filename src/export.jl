@@ -1,4 +1,51 @@
 
+function buildindexfiles(dir)
+    items = ["---", "engine: julia", "---", "", "# Index", ""]
+    for name in readdir(dir)
+        fullpath = joinpath(dir, name)
+        if isdir(fullpath)
+            @debug("Descend dir $(name) later...")
+            #buildindexfiles(fullpath)
+        elseif endswith(name, ".md")
+            @debug("index MD file $(name)")
+            renamed = replace(replace(name, "_" => " "), r".md$" => "")
+            target = replace(name, r".md$" => ".html")
+            push!(items, string("- [$(renamed)](./$(target))"))
+        end
+        
+
+
+       
+    end
+
+
+
+    subdirs = []
+    for name in readdir(dir)
+        fullpath = joinpath(dir, name)
+        if isdir(fullpath)
+            @debug("Descending dir $(name) later...")
+            buildindexfiles(fullpath)
+            push!(subdirs, name)
+        end
+    end
+    
+    if ! isempty(subdirs)
+        push!(items, "## Further documents\n\n")
+        for dir in subdirs
+            push!(items, "- [$(dir)](./$(dir)/)")
+        end
+    end
+
+    indexfile = joinpath(dir, "index.qmd")
+    open(indexfile,"w") do io
+        write(io, join(items, "\n"))
+    end
+    @info("Wrote $(indexfile)")
+end
+
+
+
 function publicexport(gv::GenealogyVault, outdir)
     for person in people(gv)
         @debug("Make page for $(person)")
@@ -88,7 +135,8 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
 
     # add index of last names
     lastnameindex(genvault, outdir)
-    
+    # add indices to transcriptions:
+    buildindexfiles(joinpath(genvault.vault.root, "transcriptions"))    
     
 end
 
