@@ -17,6 +17,14 @@ function privateexport(gv::GenealogyVault, outdir)
     end
 end
 
+
+"""Compose index of persons by last name.
+$(SIGNATURES)
+"""
+function lastnameindex(gv::GenealogyVault, outdir)
+    tags(gv.vault, "#lastname")
+end
+
 """Export a `GenealogyVault`.
 $(SIGNATURES)
 """
@@ -31,9 +39,17 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
     else
         privateexport(genvault, outdir)
     end
+
+    # add index of last names
+    lastnameindex(genvault, outdir)
+    
     
 end
 
+
+"""Format a page with privacy notice for person not identified as deceased.
+$(SIGNATURES)
+"""
 function placeholderpage(gv, person, outputdir)
     srcpath = path(gv.vault, person; relative = true) 
     dest = joinpath(outputdir, srcpath)
@@ -103,7 +119,9 @@ function formatbirthsources(gv, person)
     pagelines
 end
 
-
+"""Format a Markdown display of documentation for death of a person.
+$(SIGNATURES)
+"""
 function formatdeathsources(gv, person)
     pagelines = []
     deathsrcs = deathrecords(gv, person)
@@ -120,7 +138,9 @@ function formatdeathsources(gv, person)
     pagelines
 end
 
-
+"""Format a Markdown display of documentation for parents of a person.
+$(SIGNATURES)
+"""
 function formatparentsources(gv, person)
     pagelines = []
     
@@ -149,30 +169,87 @@ function formatparentsources(gv, person)
     pagelines
 end
 
+function checkdir(dest)
+    destdir = dirname(dest)
+    if ! isdir(destdir)
+        mkpath(destdir)
+        @info("Created new directory $(destdir)")
+    end
+    @debug("Dest is $(dest)")
+end
 
+function formatchildren(gv::GenealogyVault, person, spouse)
+    pagelines = ["**Children with $(htmllinkedstring(gv, person, spouse))**:"]
+    push!(pagelines, "\n")
+    kids = childrecords(gv, person, dewikify(spouse))
+    @debug("For $(person) and $(spouse), work with these kids $(kids)")
+    for kid in kids
+        item = string("- ", htmllinkedstring(gv, person, kid.name), "\n")
+        push!(pagelines, item)
+    end
+    pagelines
+end
+
+
+
+function formatchildsources(gv::GenealogyVault, person, spouse)
+    pagelines  = ["Sources for children with $(htmllinkedstring(gv, person, spouse))"]
+    push!(pagelines, "\n")
+    kids = childrecords(gv, person, dewikify(spouse))
+    for rec in kids     
+        item = string("- ", htmllinkedstring(gv, person, rec.source), "\n")
+        push!(pagelines, item)
+    end
+    push!(pagelines, "\n")
+    pagelines
+end
+
+function pageheader(person)
+    pagelines = ["---","engine: julia", "---","","", ]
+    push!(pagelines, "> *Page automatically generated.*")
+    push!(pagelines, "")
+
+    push!(pagelines,"# $(person)\n\n")
+    pagelines
+end
+
+function outputfilename(gv, person, outputdir)
+    srcpath = path(gv.vault, person; relative = true) 
+    destfile = joinpath(outputdir, srcpath)
+    qmd = replace(destfile, r".md$" => ".qmd")
+    exportoutput = replace(qmd, " " => "_")
+    checkdir(exportoutput)
+    exportoutput
+end
+
+function embedancestordiagram(gv::GenealogyVault, person)
+    pagelines = ["Documented ancestors:\n"]
+    ancdiagram = ancestordiagram(gv, person) |> wrapmermaid
+    for ln in split(ancdiagram, "\n")
+        push!(pagelines, ln)
+    end
+    push!(pagelines, "\n")
+    pagelines
+end
+
+function embeddescendantdiagram(gv::GenealogyVault, person)
+    pagelines  = ["Documented descendants:\n"]
+    descdiagram = descendantdiagram(gv, person) |> wrapmermaid
+    for ln in split(descdiagram, "\n")
+        push!(pagelines, ln)
+    end
+    push!(pagelines, "\n")
+    pagelines
+end
 
 """Compose a summary page of resources for a named person.
 $(SIGNATURES)
 """
 function makepersonpage(gv::GenealogyVault, person, outputdir)
 
-    srcpath = path(gv.vault, person; relative = true) 
-    dest = joinpath(outputdir, srcpath)
+    dest = outputfilename(gv, person, outputdir)
+    pagelines = pageheader(person)
 
-    qmd = replace(dest, r".md$" => ".qmd")
-    dest = replace(qmd, " " => "_")
-    destdir = dirname(dest)
-    if ! isdir(destdir)
-        mkpath(destdir)
-    end
-
-    @debug("Dest is $(dest)")
-
-    pagelines = ["---","engine: julia", "---","","", ]
-
-    push!(pagelines, "> *Page automatically generated.*")
-    push!(pagelines, "")
-    push!(pagelines,"# $(person)\n\n")#, "", ""   
     basicdata = formatconclusions(gv, person)
     for ln in basicdata
         push!(pagelines, ln)
@@ -183,39 +260,25 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     spice = partners(gv, person)
     if ! isempty(spice)
         for spouse in spice
-            
-            push!(pagelines, "**Children with $(htmllinkedstring(gv, person, spouse))**:")
-            push!(pagelines, "\n")
-            kids = childrecords(gv, person, dewikify(spouse))
-            @debug("For $(person) and $(spouse), work with these kids $(kids)")
-            for kid in kids
-                item = string("- ", htmllinkedstring(gv, person, kid.name), "\n")
-                push!(pagelines, item)
+            for childline in formatchildren(gv, person, spouse)    
+                push!(pagelines, childline)
             end
         end
         push!(pagelines, "\n")
     end
 
 
-
     basics = conclusions(gv, person)
-
     if basics.father != "?" || basics.mother != "?"
-        push!(pagelines, "Documented ancestors:\n")
-        ancdiagram = ancestordiagram(gv, person) |> wrapmermaid
-        for ln in split(ancdiagram, "\n")
+        for ln in embedancestordiagram(gv, person)
             push!(pagelines, ln)
         end
-        push!(pagelines, "\n")
     end
-   
+
     if ! isempty(spice)
-        push!(pagelines, "Documented descendants:\n")
-        descdiagram = descendantdiagram(gv, person) |> wrapmermaid
-        for ln in split(descdiagram, "\n")
+        for ln in embeddescendantdiagram(gv, person)
             push!(pagelines, ln)
         end
-        push!(pagelines, "\n")
     end
     
     
@@ -245,27 +308,19 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
        push!(pagelines, "")
     end
     
-
     if ! isempty(spice)
-        
         for spouse in spice
-            push!(pagelines, "Sources for children with $(htmllinkedstring(gv, person, spouse))")
-            push!(pagelines, "\n")
-            kids = childrecords(gv, person, dewikify(spouse))
-            for rec in kids     
-                item = string("- ", htmllinkedstring(gv, person, rec.source), "\n")
-                push!(pagelines, item)
+            for ln in formatchildsources(gv, person, spouse)
+                push!(pagelines, ln)
             end
-            push!(pagelines, "\n")
         end
     end
 
-    
-
 
     pagetext = join(pagelines, "\n")
-
     open(dest, "w") do io
         write(io, pagetext)
-    end   
+    end 
+ 
+    #@info("Wrote page to $(dest)")  
 end
