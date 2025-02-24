@@ -21,6 +21,7 @@ $(SIGNATURES)
 function cssClasses()
     """classDef mother fill:#ffd1dc
 classDef father fill:#daf0f7  
+classDef marriage fill:#ffffff
 """
 end
 
@@ -70,7 +71,7 @@ $(SIGNATURES)
 function descendantdiagram(gv::GenealogyVault, person)
     edges = []
     descendant_edges!(gv, person, edges)
-    string("graph LR\n", join(edges, "\n"))
+    string("graph LR\n", join(edges, "\n"),"\n", cssClasses())
 end
 
 
@@ -83,10 +84,10 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
     else
         spice = partners(gv, person)
         for spouse in spice
-            mrg = replace((string(person, "+", dewikify(spouse))), " " => "_")
-
+            mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
+            push!(edges, "class $(mrg) marriage")
             push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
-            push!(edges, "$(nodelabel(spouse)) --> $(mrg)[ ]")
+            push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
             kids = childrecords(gv, person, dewikify(spouse))
             for kid in kids
                 @debug("Linking $(mrg) to $(dewikify(kid.name))")
