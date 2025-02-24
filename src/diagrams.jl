@@ -3,7 +3,7 @@
 $(SIGNATURES)
 """
 function nodelabel(s)
-    string(replace(dewikify(s), " " => "_"), "[", dewikify(s), "]")
+    string(replace(dewikify(s), " " => "_"), "(", dewikify(s), ")")
 end
 
 

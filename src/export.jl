@@ -1,6 +1,7 @@
-
+"""Recursively compose `index.qmd` files with lists of links for all directories beginning from `dir`.
+$(SIGNATURES)
+"""
 function buildindexfiles(dir, outroot)
-
     #@info("Build index for $(outroot) from $(dir)")
     items = ["---", "engine: julia", "---", "", "# Index", ""]
     for name in readdir(dir)
@@ -50,7 +51,9 @@ function buildindexfiles(dir, outroot)
 end
 
 
-
+"""Export person records to Markdown, excluding records for living people.
+$(SIGNATURES)
+"""
 function publicexport(gv::GenealogyVault, outdir)
     for person in people(gv)
         @debug("Make page for $(person)")
@@ -62,6 +65,9 @@ function publicexport(gv::GenealogyVault, outdir)
     end
 end
 
+"""Export all person records to Markdown, including records for living people.
+$(SIGNATURES)
+"""
 function privateexport(gv::GenealogyVault, outdir)
     for person in people(gv)
         @debug("Make page for $(person)")
