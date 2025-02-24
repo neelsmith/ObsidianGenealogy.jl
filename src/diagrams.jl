@@ -7,6 +7,13 @@ function nodelabel(s)
 end
 
 
+function linkednodelabel(gv::GenealogyVault, src, target)
+    relpath = htmllink(gv, src, target)
+    pathlabel = string("<a href='",relpath,"'>", dewikify(target), "</>")
+    
+    string(replace(dewikify(target), " " => "_"), "(", pathlabel, ")")
+end
+
 """Wrap string `s` in mermaid block fencing.
 $(SIGNATURES)
 """
@@ -47,14 +54,17 @@ function ancestor_edges!(v::GenealogyVault, person, edges)
         mom = mother(v, person)
 
         if ! isnothing(dad)
-            push!(edges, "$(nodelabel(person)) -->  $(nodelabel(dad))")
+
+            #push!(edges, "$(nodelabel(person)) -->  $(nodelabel(dad))")
+            push!(edges, "$(linkednodelabel(v, person, person)) -->  $(linkednodelabel(v, person, dad))")
             ancestor_edges!(v, dad, edges)
             nodename = replace(dewikify(dad), " " => "_")
             push!(edges, "class $(nodename) father")
         end
 
         if ! isnothing(mom) #m !== nothing
-            push!(edges, "$(nodelabel(person))  --> $(nodelabel(mom))")
+            #push!(edges, "$(nodelabel(person))  --> $(nodelabel(mom))")
+            push!(edges, "$(linkednodelabel(v,person,person))  --> $(linkednodelabel(v,person,mom))")
             ancestor_edges!(v, mom, edges)
             nodename = replace(dewikify(mom), " " => "_")
             push!(edges, "class $(nodename) mother")
@@ -86,12 +96,15 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
         for spouse in spice
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
             push!(edges, "class $(mrg) marriage")
-            push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
-            push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
+            #push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
+            push!(edges, "$(linkednodelabel(gv, person,person)) --> $(mrg)[ ]")
+            #push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
+            push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
             kids = childrecords(gv, person, dewikify(spouse))
             for kid in kids
                 @debug("Linking $(mrg) to $(dewikify(kid.name))")
-                push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
+                #push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
+                push!(edges, "$(mrg)[ ] --> $(linkednodelabel(gv, person, kid.name))")
                 descendant_edges!(gv, kid.name, edges)
             end
         end
