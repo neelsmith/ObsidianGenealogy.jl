@@ -1,24 +1,43 @@
 
+"""Compose a label for a node in a Mermaid diagram.
+$(SIGNATURES)
+"""
 function nodelabel(s)
     string(replace(dewikify(s), " " => "_"), "[", dewikify(s), "]")
 end
 
+
+"""Wrap string `s` in mermaid block fencing.
+$(SIGNATURES)
+"""
 function wrapmermaid(s; quarto = true)
     quarto ? string("```{mermaid}\n",s,"\n```\n") : string("```{mermaid}\n",s,"\n```\n") 
 end
 
+
+"""Define CSS classes for ancestor and descendant diagrams.
+$(SIGNATURES)
+"""
 function cssClasses()
     """classDef mother fill:#ffd1dc
 classDef father fill:#daf0f7  
 """
 end
 
+
+"""Compose a Mermaid diagram for the ancestor tree of a named individual.
+$(SIGNATURES)
+"""
 function ancestordiagram(v::GenealogyVault, name)
     edges = []
     ancestor_edges!(v, name, edges)
     string("graph LR\n", join(edges, "\n"), "\n", cssClasses())
 end
 
+
+"""Recursively compile edges for the ancestor graph of a given person.
+$(SIGNATURES)
+"""
 function ancestor_edges!(v::GenealogyVault, person, edges)
     if isnothing(person)
         # nothing
@@ -44,6 +63,10 @@ end
 
 
 
+
+"""Compose a Mermaid diagram for the descendant tree of a named individual.
+$(SIGNATURES)
+"""
 function descendantdiagram(gv::GenealogyVault, person)
     edges = []
     descendant_edges!(gv, person, edges)
@@ -51,7 +74,9 @@ function descendantdiagram(gv::GenealogyVault, person)
 end
 
 
-
+"""Recursively compile edges for the descendat graph of a given person.
+$(SIGNATURES)
+"""
 function descendant_edges!(gv::GenealogyVault, person, edges)
     if isnothing(person)
         # nothing
