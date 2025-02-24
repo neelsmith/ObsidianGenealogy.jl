@@ -7,10 +7,16 @@ function wrapmermaid(s; quarto = true)
     quarto ? string("```{mermaid}\n",s,"\n```\n") : string("```{mermaid}\n",s,"\n```\n") 
 end
 
+function cssClasses()
+    """classDef mother fill:#ffd1dc
+classDef father fill:#daf0f7  
+"""
+end
+
 function ancestordiagram(v::GenealogyVault, name)
     edges = []
     ancestor_edges!(v, name, edges)
-    string("graph LR\n", join(edges, "\n"))
+    string("graph LR\n", join(edges, "\n"), "\n", cssClasses())
 end
 
 function ancestor_edges!(v::GenealogyVault, person, edges)
@@ -23,11 +29,15 @@ function ancestor_edges!(v::GenealogyVault, person, edges)
         if ! isnothing(dad)
             push!(edges, "$(nodelabel(person)) -->  $(nodelabel(dad))")
             ancestor_edges!(v, dad, edges)
+            nodename = replace(dewikify(dad), " " => "_")
+            push!(edges, "class $(nodename) father")
         end
 
         if ! isnothing(mom) #m !== nothing
             push!(edges, "$(nodelabel(person))  --> $(nodelabel(mom))")
             ancestor_edges!(v, mom, edges)
+            nodename = replace(dewikify(mom), " " => "_")
+            push!(edges, "class $(nodename) mother")
         end
     end
 end
