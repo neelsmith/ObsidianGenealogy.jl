@@ -1,6 +1,7 @@
 
 function buildindexfiles(dir, outroot)
-    @info("Build index for $(dir)")
+
+    #@info("Build index for $(outroot) from $(dir)")
     items = ["---", "engine: julia", "---", "", "# Index", ""]
     for name in readdir(dir)
         fullpath = joinpath(dir, name)
@@ -8,10 +9,12 @@ function buildindexfiles(dir, outroot)
             @debug("Descend dir $(name) later...")
            
         elseif endswith(name, ".qmd") || endswith(name, ".md")
-            @debug("index MD file $(name)")
-            renamed = replace(replace(name, "_" => " "), r".q?md$" => "")
-            target = replace(name, r".q?md$" => ".html")
-            push!(items, string("- [$(renamed)](./$(target))"))
+            if name != "index.qmd"
+                @debug("index MD file $(name)")
+                renamed = replace(replace(name, "_" => " "), r".q?md$" => "")
+                target = replace(replace(name, r".q?md$" => ".html"), " " => "_")
+                push!(items, string("- [$(renamed)](./$(target))"))
+            end
         end
     end
 
@@ -27,17 +30,23 @@ function buildindexfiles(dir, outroot)
     end
     
     if ! isempty(subdirs)
+        push!(items, "\n")
         push!(items, "## Further documents\n\n")
         for dir in subdirs
-            push!(items, "- [$(dir)](./$(dir)/)")
+            cleanname = replace(dir, " " => "_")
+            push!(items, "- [$(dir)](./$(cleanname)/)")
         end
     end
 
-    indexfile = joinpath(dir, "index.qmd")
+    outdir = replace(outroot, " " => "_")
+    indexfile = joinpath(outdir, "index.qmd")
+    if ! isdir(outdir)
+        mkdir(outdir)
+    end
     open(indexfile,"w") do io
         write(io, join(items, "\n"))
     end
-    #@info("Wrote $(indexfile)")
+    @debug("Wrote $(indexfile)")
 end
 
 
@@ -118,6 +127,7 @@ end
 $(SIGNATURES)
 """
 function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
+
     for doc in documents(genvault)
         exportmd(genvault.vault, doc, outdir)   
     end
@@ -130,11 +140,11 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
 
     # add index of last names
     lastnameindex(genvault, outdir)
- 
+
     # add indices to transcriptions:
     xcrsroot = joinpath(genvault.vault.root, "transcriptions")
     xcrsoutput = joinpath(outdir, "transcriptions")
-    @warn("Add indices to $(xcrsroot)")
+    @warn("Add indices to $(xcrsoutput)")
     buildindexfiles(xcrsroot, xcrsoutput)
     
 end
@@ -415,5 +425,5 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
         write(io, pagetext)
     end 
  
-    #@info("Wrote page to $(dest)")  
+    @info("Wrote page to $(dest)")  
 end

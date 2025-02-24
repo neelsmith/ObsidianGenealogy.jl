@@ -74,7 +74,7 @@ function deathstructure(note::NoteKV)
         (name, date, place, source, sourcetype) = cols
         (name = name, date = date, place = place, source = source, sourcetype = sourcetype) 
     else
-        @warn("Unable to parse birthstructure in note $(note)")
+        @warn("Unable to parse deathstructure in note $(note)")
         nothing
     end
     
