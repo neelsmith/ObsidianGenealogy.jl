@@ -13,6 +13,6 @@ TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 [compat]
 DocStringExtensions = "0.9"
 Documenter = "1"
-Obsidian = "0.4"
+Obsidian = "0.5"
 Test = "1"
 TestSetExtensions = "2"

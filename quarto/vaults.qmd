@@ -36,14 +36,25 @@ docs = documents(genvault)
 folks = people(genvault)
 ```
 
-## Documented claims
 
-*Documented claims*: a structure that groups a primary source document, an assertion about a specific type of claim, and one or more people involved in the claim.
 
-Here are types of claims that this package currently recognizes:
+## Cataloged images in the notes
 
-- birth
-- death 
-- parents
+```{julia}
+imglist = images(genvault)
+```
 
-Other types (many) will be added gradually.
+
+## Obsidian tags
+
+Dictionary of tags to notes where the tag occurs:
+
+```{julia}
+tagsnotedict = tagstopages(genvault.vault)
+```
+
+
+
+```{julia}
+notestagdict = notestotags(genvault.vault)
+```

@@ -1,16 +1,22 @@
 
+"""An Obsidian vault with genealogical data.
+"""
 struct GenealogyVault
     vault::Vault
     documents
     people
+    images
 
-    function GenealogyVault(v::Vault, docs, folks)
+    """Validate parameters before instantiating a vault."""
+    function GenealogyVault(v::Vault, docs, folks, imgs)
         if ! isdir(joinpath(v.root, docs))
             throw(ArgumentError("No directory for documents at path $(joinpath(v.root, docs)) "))
         elseif  ! isdir(joinpath(v.root, folks))
             throw(ArgumentError("No directory for people at path $(joinpath(v.root, docs)) "))
+        elseif ! isdir(joinpath(v.root, imgs))
+            throw(ArgumentError("No directory for images at path $(joinpath(v.root, imgs)) "))
         else
-            new(v, docs, folks)
+            new(v, docs, folks, imgs)
         end
     end
 end
@@ -25,23 +31,19 @@ function show(io::IO, v::GenealogyVault)
     show(io,str)
 end
 
-
 """Construct a `GenealogyVault` from a directory name.
 $(SIGNATURES)
 """
-function genealogyVault(dir::AbstractString; docs = "transcriptions", people = "people")
-    GenealogyVault(Vault(dir), docs, people)
+function genealogyVault(dir::AbstractString; docs = "transcriptions", people = "people", imgs = "images")
+    GenealogyVault(Vault(dir), docs, people, imgs)
 end
-
-
 
 """Construct a `GenealogyVault` from an Obsidian `Vault`.
 $(SIGNATURES)
 """
-function genealogyVault(v::Vault;  docs = "transcriptions", people = "people")
-    GenealogyVault(v, docs, people)
+function genealogyVault(v::Vault;  docs = "transcriptions", people = "people", imgs = "images")
+    GenealogyVault(v, docs, people, imgs)
 end
-
 
 """Collect list of transcribed documents in a geneaological Obsidian vault.
 $(SIGNATURES)
@@ -77,12 +79,11 @@ end
 
 
 
-function noteson(gv::GenealogyVault, person)
-    tripls = gv.vault |> kvtriples
-    filter(t -> t.wikiname == person, tripls) 
-end
 
 
+"""Find triples for all claims identifying a father.
+$(SIGNATURES)
+"""
 function fatherlist(gv::GenealogyVault)
     tripls = gv.vault |> kvtriples
     fathers = filter(tripls) do t
@@ -92,6 +93,11 @@ function fatherlist(gv::GenealogyVault)
     fatherstructure.(fathers)
 end
 
+
+
+"""Find triples for all claims identifying a mother.
+$(SIGNATURES)
+"""
 function motherlist(gv::GenealogyVault)
     tripls = gv.vault |> kvtriples
     mothers = filter(tripls) do t
@@ -99,4 +105,14 @@ function motherlist(gv::GenealogyVault)
     end 
 
     motherstructure.(mothers)
+end
+
+
+
+"""Find all key-value notes on a given person.
+$(SIGNATURES)
+"""
+function noteson(gv::GenealogyVault, person)
+    tripls = gv.vault |> kvtriples
+    filter(t -> t.wikiname == person, tripls) 
 end

@@ -75,6 +75,19 @@ using ObsidianGenealogy
 :::
 
 
+### Collect data from entire vault
+
+
+`kvtriples` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc kvtriples
+```
+:::
 
 
 `fatherlist` 
@@ -101,6 +114,18 @@ using ObsidianGenealogy
 :::
 
 
+
+
+`noteson` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc noteson
+```
+:::
 
 ## Claims
 

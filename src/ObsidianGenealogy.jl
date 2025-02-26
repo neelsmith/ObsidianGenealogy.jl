@@ -19,8 +19,9 @@ include("export.jl")
 
 
 export GenealogyVault, genealogyVault
-export documents, people
+export documents, people, images
 
+export kvtriples
 export birthrecords, deathrecords
 export parentrecords, childrecords, partners
 export father, mother

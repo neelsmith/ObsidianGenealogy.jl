@@ -133,6 +133,11 @@ end
 $(SIGNATURES)
 """
 function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
+    
+
+    for img in images(genvault)
+        exportmd(genvault.vault, img, outdir)   
+    end
 
     for doc in documents(genvault)
         exportmd(genvault.vault, doc, outdir)   

@@ -5,6 +5,20 @@ engine: julia
 # Documented claims
 
 
+*Documented claims*: a structure that groups a primary source document, an assertion about a specific type of claim, and one or more people involved in the claim.
+
+Here are types of claims that this package currently recognizes:
+
+- birth
+- death 
+- parents
+
+Other types (many) will be added gradually.
+
+:::{.callout-note title="Next TBA"}
+- marriage
+:::
+
 
 ```{julia}
 #| echo: false
