@@ -45,7 +45,15 @@ imglist = images(genvault)
 ```
 
 
-## Obsidian tags
+## Summarizing the source `Vault`
+
+### Note names
+
+```{julia}
+notenames = wikinames(genvault.vault)
+```
+
+### Obsidian tags
 
 Dictionary of tags to notes where the tag occurs:
 
@@ -54,7 +62,8 @@ tagsnotedict = tagstopages(genvault.vault)
 ```
 
 
+Dictionary of notes to all tags on the note.
 
 ```{julia}
-notestagdict = notestotags(genvault.vault)
+notestagdict = pagestotags(genvault.vault)
 ```

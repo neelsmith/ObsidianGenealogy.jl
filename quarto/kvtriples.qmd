@@ -1,0 +1,60 @@
+---
+engine: julia
+---
+
+## Dataview key-value properties
+
+
+```{julia}
+#| echo: false
+#| output: false
+#| warning: false
+repo = pwd() |> dirname
+```
+
+
+
+```{julia}
+using Obsidian, ObsidianGenealogy
+dir = joinpath(repo,"test", "assets", "presidents-vault")
+genvault = genealogyVault(dir)
+```
+
+Get the triples:
+
+```{julia}
+kvlist = kvtriples(genvault.vault)
+```
+
+
+
+
+
+## The `NoteKV`
+
+
+```{julia}
+kvitem = kvlist[end]
+```
+
+```{julia}
+wikiname(kvitem)
+```
+
+```{julia}
+key(kvitem)
+```
+
+```{julia}
+value(kvitem)
+```
+
+
+## Figure these out from `Obsidian`
+
+
+
+- links, link, validlink
+- linkson, linkedto
+- tags, tagged
+- valueslist, noteslist
