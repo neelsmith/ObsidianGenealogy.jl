@@ -12,3 +12,4 @@ engine: julia
 - introduction to [genealogy vaults and their contents](./vaults.qmd)
 - introduction to [documented claims](./claims.qmd)
 - [exporting a vault](./export.qmd) to Quarto
+- [API documentation](./api.qmd)

@@ -1,0 +1,128 @@
+---
+engine: julia
+---
+
+# API documentation
+```{julia}
+#| echo: false
+#| warning: false
+#| output: false
+using ObsidianGenealogy
+```
+
+
+## Vaults
+
+
+
+`GenealogyVault` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc GenealogyVault
+```
+:::
+
+`genealogyVault` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc genealogyVault
+```
+:::
+
+
+`documents` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc documents
+```
+:::
+
+
+`people` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc people
+```
+:::
+
+
+
+`images` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc images
+```
+:::
+
+
+
+
+`fatherlist` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc fatherlist
+```
+:::
+
+
+`motherlist` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc motherlist
+```
+:::
+
+
+
+## Claims
+
+
+`birthrecords` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc birthrecords
+```
+:::
+
+`deathrecords` 
+
+:::{.callout-note appearance="minimal"}
+```{julia}
+#| echo: false
+#| warning: false
+#| 
+@doc deathrecords
+```
+:::

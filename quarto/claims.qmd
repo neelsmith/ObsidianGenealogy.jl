@@ -34,3 +34,5 @@ lincolnbirth = birthrecords(genvault, "Abraham Lincoln")
 ```{julia}
 lincolndeath = deathrecords(genvault, "Abraham Lincoln")
 ```
+
+

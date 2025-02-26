@@ -64,6 +64,19 @@ function people(gv::GenealogyVault)
 end
 
 
+
+"""Collect list of images in a geneaological Obsidian vault.
+$(SIGNATURES)
+"""
+function images(gv::GenealogyVault)
+    filenames = values(gv.vault.filemap) |> collect
+    relativepaths = map(f -> replace(f, gv.vault.root * "/" => ""), filenames)
+    docpaths = filter(f -> startswith(f, gv.images), relativepaths)
+    map(doc -> replace(basename(doc), r".md$" => ""), docpaths)
+end
+
+
+
 function noteson(gv::GenealogyVault, person)
     tripls = gv.vault |> kvtriples
     filter(t -> t.wikiname == person, tripls) 
