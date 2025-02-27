@@ -77,38 +77,6 @@ function images(gv::GenealogyVault)
     map(doc -> replace(basename(doc), r".md$" => ""), docpaths)
 end
 
-
-
-
-
-"""Find triples for all claims identifying a father.
-$(SIGNATURES)
-"""
-function fatherlist(gv::GenealogyVault)
-    tripls = gv.vault |> kvtriples
-    fathers = filter(tripls) do t
-        t.key == "father"
-    end 
-
-    fatherstructure.(fathers)
-end
-
-
-
-"""Find triples for all claims identifying a mother.
-$(SIGNATURES)
-"""
-function motherlist(gv::GenealogyVault)
-    tripls = gv.vault |> kvtriples
-    mothers = filter(tripls) do t
-        t.key == "mother"
-    end 
-
-    motherstructure.(mothers)
-end
-
-
-
 """Find all key-value notes on a given person.
 $(SIGNATURES)
 """

@@ -12,7 +12,7 @@ engine: julia
 - introduction to [genealogy vaults and their contents](./vaults.qmd)
     - [individual notes](./notes.qmd)
     - [dataview key-value properties](./kvtriples.qmd)
-- introduction to [documented claims](./claims.qmd)
+- introduction to [documented claims and conclusions](./claims.qmd)
 - [exporting a vault](./export.qmd) to Quarto
     - [linking notes](./links.qmd)
 - [API documentation](./api.qmd)

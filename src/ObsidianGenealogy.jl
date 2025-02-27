@@ -10,9 +10,9 @@ using Documenter, DocStringExtensions
 
 include("vault.jl")
 include("utils.jl")
-include("conclusions.jl")
+include("claims.jl")
 include("nuclearfamily.jl")
-include("evidence.jl")
+include("conclusions.jl")
 include("diagrams.jl")
 include("export.jl")
 
@@ -27,7 +27,11 @@ export parentrecords, childrecords, partners
 export father, mother
 
 export noteson, vitals
-export conclusions, evidenceforconclusion, validconclusion
+
+export evidenceforbirth, evidencefordeath
+export evidenceformother, evidenceforfather, evidenceforchild
+export hasconclusions, conclusions, evidenceforconclusion, validconclusion
+export invalidconclusions
 
 export exportvault
 

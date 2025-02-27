@@ -2,8 +2,11 @@
 engine: julia
 ---
 
-# Documented claims
+# Documented claims and conclusions
 
+
+
+## Claims
 
 *Documented claims*: a structure that groups a primary source document, an assertion about a specific type of claim, and one or more people involved in the claim.
 
@@ -17,6 +20,8 @@ Other types (many) will be added gradually.
 
 :::{.callout-note title="Next TBA"}
 - marriage
+- occupation
+- location or residence
 :::
 
 
@@ -36,17 +41,36 @@ dir = joinpath(repo,"test", "assets", "presidents-vault")
 genvault = genealogyVault(dir)
 ```
 
-## Birth claims
+### Birth claims
 
 ```{julia}
 lincolnbirth = birthrecords(genvault, "Abraham Lincoln")
 ```
 
 
-## Death claims
+### Death claims
 
 ```{julia}
 lincolndeath = deathrecords(genvault, "Abraham Lincoln")
 ```
 
 
+
+## Conclusions
+
+Conclusions are a single value for one of the documented topics, backed by a claim. Currently these include:
+
+
+- `birthdate`
+- `deathdate`
+- `father`
+- `mother`
+
+```{julia}
+hasconclusions(genvault, "Abraham Lincoln")
+```
+
+
+```{julia}
+conclusions(genvault, "Abraham Lincoln")
+```
