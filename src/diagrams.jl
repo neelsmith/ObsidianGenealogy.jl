@@ -39,7 +39,7 @@ $(SIGNATURES)
 function ancestordiagram(v::GenealogyVault, name)
     edges = []
     ancestor_edges!(v, name, edges)
-    string("graph LR\n", join(edges, "\n"), "\n", cssClasses())
+    string("graph RL\n", join(edges, "\n"), "\n", cssClasses())
 end
 
 
