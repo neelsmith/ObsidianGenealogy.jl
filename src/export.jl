@@ -55,14 +55,22 @@ end
 $(SIGNATURES)
 """
 function publicexport(gv::GenealogyVault, outdir)
+    exported = 0
     for person in people(gv)
         @debug("Make page for $(person)")
         if deceased(gv, person)
+            #@info("---")
+            #@info("==> MAKE public page for $(person)")
+            #@info("---")
             makepersonpage(gv, person,outdir)
+            exported = exported + 1
         else
             placeholderpage(gv, person, outdir)
         end
     end
+    @info("---")
+    @info("==> EXPORTED $(exported) public pages")
+    @info("---")
 end
 
 """Export all person records to Markdown, including records for living people.
