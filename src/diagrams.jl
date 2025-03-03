@@ -3,7 +3,11 @@
 $(SIGNATURES)
 """
 function nodelabel(s)
-    string(replace(dewikify(s), " " => "_"), "(", dewikify(s), ")")
+    string(nodestring(s), "(", dewikify(s), ")")
+end
+
+function nodestring(s)
+    replace(dewikify(s), " " => "_")
 end
 
 
@@ -89,14 +93,14 @@ end
 $(SIGNATURES)
 """
 function descendant_edges!(gv::GenealogyVault, person, edges)
-    @info("Looking for $(person)'s descendants")
+    @debug("Looking for $(person)'s descendants")
     if isnothing(person)
         # nothing
     else
         spice = partners(gv, person)
-        @info("$(person) had partners $(spice)")
+        @debug("$(person) had partners $(spice)")
         for spouse in spice
-            @info("Look for children of $(person) and $(spouse)")
+            @debug("Look for children of $(person) and $(spouse)")
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
             push!(edges, "class $(mrg) marriage")
             #push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
@@ -104,12 +108,16 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
             #push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
             push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
             kids = childrecords(gv, dewikify(person), dewikify(spouse))
-            @info("$(person) and $(spouse) had  $(length(kids)) children")
+            @debug("$(person) and $(spouse) had  $(length(kids)) children")
             for kid in kids
                 @debug("Linking $(mrg) to child $(dewikify(kid.name))")
+                kidconclusions = conclusions(gv, dewikify(kid.name))
+                push!(edges, "class $(nodestring(kidconclusions.father)) father")
+                push!(edges, "class $(nodestring(kidconclusions.mother)) mother")
+                
                 #push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
                 push!(edges, "$(mrg)[ ] --> $(linkednodelabel(gv, person, kid.name))")
-                @info("Recurse and look for descendants of $(kid.name)")
+                @debug("Recurse and look for descendants of $(kid.name)")
                 descendant_edges!(gv, kid.name, edges)
             end
         end
