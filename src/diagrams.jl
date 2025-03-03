@@ -39,7 +39,7 @@ $(SIGNATURES)
 function ancestordiagram(v::GenealogyVault, name)
     edges = []
     ancestor_edges!(v, name, edges)
-    string("graph RL\n", join(edges, "\n"), "\n", cssClasses())
+    string("graph RL\n", "%% RL ancestor diagram\n", join(edges, "\n"), "\n", cssClasses())
 end
 
 
@@ -81,7 +81,7 @@ $(SIGNATURES)
 function descendantdiagram(gv::GenealogyVault, person)
     edges = []
     descendant_edges!(gv, person, edges)
-    string("graph LR\n", join(edges, "\n"),"\n", cssClasses())
+    string("graph LR\n", "%% LR descendant diagram\n", join(edges, "\n"),"\n", cssClasses())
 end
 
 
@@ -89,22 +89,27 @@ end
 $(SIGNATURES)
 """
 function descendant_edges!(gv::GenealogyVault, person, edges)
+    @info("Looking for $(person)'s descendants")
     if isnothing(person)
         # nothing
     else
         spice = partners(gv, person)
+        @info("$(person) had partners $(spice)")
         for spouse in spice
+            @info("Look for children of $(person) and $(spouse)")
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
             push!(edges, "class $(mrg) marriage")
             #push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
             push!(edges, "$(linkednodelabel(gv, person,person)) --> $(mrg)[ ]")
             #push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
             push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
-            kids = childrecords(gv, person, dewikify(spouse))
+            kids = childrecords(gv, dewikify(person), dewikify(spouse))
+            @info("$(person) and $(spouse) had  $(length(kids)) children")
             for kid in kids
-                @debug("Linking $(mrg) to $(dewikify(kid.name))")
+                @debug("Linking $(mrg) to child $(dewikify(kid.name))")
                 #push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
                 push!(edges, "$(mrg)[ ] --> $(linkednodelabel(gv, person, kid.name))")
+                @info("Recurse and look for descendants of $(kid.name)")
                 descendant_edges!(gv, kid.name, edges)
             end
         end
