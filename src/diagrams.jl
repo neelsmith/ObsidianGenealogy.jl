@@ -51,13 +51,15 @@ end
 $(SIGNATURES)
 """
 function ancestor_edges!(v::GenealogyVault, person, edges)
-    if isnothing(person)
+    if ! hasdata(person) #
         # nothing
+        
     else
+        @debug("ancestor edges for #$(person)#")
         dad = father(v, person)
         mom = mother(v, person)
 
-        if ! isnothing(dad)
+        if hasdata(dad)
 
             #push!(edges, "$(nodelabel(person)) -->  $(nodelabel(dad))")
             push!(edges, "$(linkednodelabel(v, person, person)) -->  $(linkednodelabel(v, person, dad))")
@@ -66,7 +68,7 @@ function ancestor_edges!(v::GenealogyVault, person, edges)
             push!(edges, "class $(nodename) father")
         end
 
-        if ! isnothing(mom) #m !== nothing
+        if hasdata(mom) #m !== nothing
             #push!(edges, "$(nodelabel(person))  --> $(nodelabel(mom))")
             push!(edges, "$(linkednodelabel(v,person,person))  --> $(linkednodelabel(v,person,mom))")
             ancestor_edges!(v, mom, edges)
@@ -99,7 +101,8 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
     else
         spice = partners(gv, person)
         @debug("$(person) had partners $(spice)")
-        for spouse in spice
+        for spouse in filter(s -> hasdata(s), spice)
+
             @debug("Look for children of $(person) and $(spouse)")
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
             push!(edges, "class $(mrg) marriage")

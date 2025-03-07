@@ -2,7 +2,7 @@
 $(SIGNATURES)
 """
 function buildindexfiles(dir, outroot)
-    #@info("Build index for $(outroot) from $(dir)")
+    #@debug("Build index for $(outroot) from $(dir)")
     items = ["---", "engine: julia", "---", "", "# Index", ""]
     for name in readdir(dir)
         fullpath = joinpath(dir, name)
@@ -59,9 +59,9 @@ function publicexport(gv::GenealogyVault, outdir)
     for person in people(gv)
         @debug("Make page for $(person)")
         if deceased(gv, person)
-            #@info("---")
-            #@info("==> MAKE public page for $(person)")
-            #@info("---")
+            #@debug("---")
+            #@debug("==> MAKE public page for $(person)")
+            #@debug("---")
             makepersonpage(gv, person,outdir)
             exported = exported + 1
         else
@@ -109,7 +109,7 @@ function lastnameindex(gv::GenealogyVault, outdir)
         string("- [$(pg)](./$(pg).html)")
     end
     indexfile = joinpath(destdir, "index.qmd")
-    #@info("INdex file is $(indexfile)")
+    #@debug("INdex file is $(indexfile)")
     indexcontents = indexheader * join(indexpageitems,"\n")
     open(indexfile,"w") do io
         write(io, indexcontents)
@@ -163,7 +163,7 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
     # add indices to transcriptions:
     xcrsroot = joinpath(genvault.vault.root, "transcriptions")
     xcrsoutput = joinpath(outdir, "transcriptions")
-    @warn("Add indices to $(xcrsoutput)")
+    @debug("Add indices to $(xcrsoutput)")
     buildindexfiles(xcrsroot, xcrsoutput)
     
 end
@@ -203,14 +203,16 @@ $(SIGNATURES)
 """
 function formatconclusions(gv::GenealogyVault, person)
     tpl = conclusions(gv, person)
-    #motherrel = Obsidian.relativelink(gv.vault, person, tpl.mother)
-    motherrel = htmllink(gv.vault, person, tpl.mother)
-    @debug("So link to mother is $(motherrel)")
-    motherlink = string("[", tpl.mother, "](", motherrel, ")")
+    @debug("Got conclusions for $(person)")
 
-    #fatherrel = Obsidian.relativelink(gv.vault, person, tpl.father)
-    fatherrel = htmllink(gv.vault, person, tpl.father)
-    fatherlink = string("[", tpl.father, "](", fatherrel, ")")
+
+    motherrel = tpl.mother == "?" ? "" :  htmllink(gv.vault, person, tpl.mother)
+    @debug("So link to mother is $(motherrel)")
+    motherlink = isempty(motherrel) ? tpl.mother : string("[", tpl.mother, "](", motherrel, ")")
+
+
+    fatherrel =  tpl.father == "?" ? "" : htmllink(gv.vault, person, tpl.father)
+    fatherlink =  isempty(fatherrel) ? tpl.father : string("[", tpl.father, "](", fatherrel, ")")
 
     [   
         "*born* $(tpl.birth) : *died* $(tpl.death)",
@@ -273,17 +275,22 @@ function formatparentsources(gv, person)
     for tpl in parentsrcs
 
         sourcewikiname = replace(tpl.source,r"[\[\]]" => "")
+
+        @debug("LINKING TO $(sourcewikiname)")
         sourcerel  = htmllink(gv.vault, person, sourcewikiname)
         sourcelink = string("[", sourcewikiname, "](", sourcerel, ")")
 
-
-        fatherwikiname = replace(tpl.father,r"[\[\]]" => "")
+        
+        fatherwikiname = dewikify(tpl.father) #replace(tpl.father,r"[\[\]]" => "")
         fatherrel = htmllink(gv.vault, person, fatherwikiname)
-        fatherlink =  string("[", fatherwikiname, "](", fatherrel, ")")
+        @debug("Fathre rel is $(fatherrel)")
+        fatherlink = isempty(fatherrel) ? "" : string("[", fatherwikiname, "](", fatherrel, ")")
+    
 
-        motherwikiname = replace(tpl.mother,r"[\[\]]" => "")
+        motherwikiname = dewikify(tpl.mother) #replace(tpl.mother,r"[\[\]]" => "")
         motherrel = htmllink(gv.vault, person, motherwikiname)
-        motherlink =  string("[", motherwikiname, "](", motherrel, ")")
+        @debug("Mother rel is $(motherrel)")
+        motherlink =  isempty(motherrel) ? "" : string("[", motherwikiname, "](", motherrel, ")")
 
         push!(pagelines, "| $(fatherlink) | $(motherlink) | $(sourcelink) | $(tpl.sourcetype) |")
     end
@@ -371,72 +378,80 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
 
     dest = outputfilename(gv, person, outputdir)
     pagelines = pageheader(person)
-
+    @debug("Make page for $(person)")
     basicdata = formatconclusions(gv, person)
     for ln in basicdata
         push!(pagelines, ln)
     end
     push!(pagelines, "")
-
+    @debug("Formatted conclusoins for $(person)")
 
     spice = partners(gv, person)
-    if ! isempty(spice)
-        for spouse in spice
+    for spouse in spice
+        if hasdata(spouse)
+            @debug("Format children for $(spouse)")
             for childline in formatchildren(gv, person, spouse)    
                 push!(pagelines, childline)
             end
+            push!(pagelines, "\n")
         end
-        push!(pagelines, "\n")
     end
+    
+
 
 
     basics = conclusions(gv, person)
-    if basics.father != "?" || basics.mother != "?"
+    @debug("Retrieved conclusoins for $(person)")
+    if hasdata(basics.father) || hasdata(basics.mother)
         for ln in embedancestordiagram(gv, person)
             push!(pagelines, ln)
         end
     end
-
+    @debug("Embedded ancestor diagram")
     if ! isempty(spice)
         for ln in embeddescendantdiagram(gv, person)
             push!(pagelines, ln)
         end
     end
-    
+    @debug("Embedded descendant diagram")
     
     if hasconclusions(basics)
         push!(pagelines, "## Sources")
     end
-    if basics.birth != "?"
+    if hasdata(basics.birth)
         push!(pagelines, "Sources for birth:\n\n")
         for ln in formatbirthsources(gv, person)
             push!(pagelines, ln)
        end
        push!(pagelines, "")
     end
-    if basics.death != "?"
+    if hasdata(basics.death)
         push!(pagelines, "Sources for death:\n\n")
         for ln in formatdeathsources(gv, person)
             push!(pagelines, ln)
        end
        push!(pagelines, "")
     end
-    
-    if basics.father != "?" || basics.mother != "?"
+    @debug("Got birth/date dates")
+    @debug("Check for parents")
+    if hasdata(basics.father) || hasdata(basics.mother)
         push!(pagelines, "Sources for parents:\n\n")
+        @debug("Get parent sources for $(person)")
         for ln in formatparentsources(gv, person)
             push!(pagelines, ln)
        end
+       @debug("Formatted parent sources")
        push!(pagelines, "")
     end
+    @debug("Check spice")
     
-    if ! isempty(spice)
-        for spouse in spice
-            for ln in formatchildsources(gv, person, spouse)
-                push!(pagelines, ln)
-            end
+    for spouse in filter(s -> hasdata(s), spice)
+        @debug("Now on to children for $(spouse)")
+        for ln in formatchildsources(gv, person, spouse)
+            push!(pagelines, ln)
         end
     end
+
 
 
     pagetext = join(pagelines, "\n")
