@@ -109,7 +109,8 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
             #push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
             push!(edges, "$(linkednodelabel(gv, person,person)) --> $(mrg)[ ]")
             #push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
-            push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
+            #push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
+            push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg){{\" \"}}")
             kids = childrecords(gv, dewikify(person), dewikify(spouse))
             @debug("$(person) and $(spouse) had  $(length(kids)) children")
             for kid in kids
@@ -119,7 +120,7 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
                 push!(edges, "class $(nodestring(kidconclusions.mother)) mother")
                 
                 #push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
-                push!(edges, "$(mrg)[ ] --> $(linkednodelabel(gv, person, kid.name))")
+                push!(edges, "$(mrg){{ }} --> $(linkednodelabel(gv, person, kid.name))")
                 @debug("Recurse and look for descendants of $(kid.name)")
                 descendant_edges!(gv, kid.name, edges)
             end
