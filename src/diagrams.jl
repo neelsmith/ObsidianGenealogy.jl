@@ -122,7 +122,7 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
             @debug("Look for children of $(person) and $(spouse)")
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
             push!(edges, "class $(mrg) marriage")      
-            deceased(gv, dewikify(person)) ? @info("$(person) deceased") :  @info("$(person) NOT deceased")
+            #deceased(gv, dewikify(person)) ? @info("$(person) deceased") :  @info("$(person) NOT deceased")
             if deceased(gv, dewikify(person))
                 push!(edges, "$(linkednodelabel(gv, person, person)) --> $(mrg){{ }}")
             else
