@@ -21,7 +21,7 @@ $(SIGNATURES)
 """
 function linkednodelabel(gv::GenealogyVault, src, target)
     relpath = htmllink(gv, src, target)
-    pathlabel = string("<a href='",relpath,"'>", dewikify(target), "'</>")
+    pathlabel = string("<a href='",relpath,"'>", dewikify(target), "</a>")
     
     string(replace(dewikify(target), " " => "_"), "(", pathlabel, ")")
 end
@@ -111,7 +111,7 @@ end
 $(SIGNATURES)
 """
 function descendant_edges!(gv::GenealogyVault, person, edges)
-    @debug("Looking for $(person)'s descendants")
+    @info("Looking for $(person)'s descendants")
     if isnothing(person)
         # nothing
     else
@@ -130,6 +130,8 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
                 push!(edges, "$(node(person)) --> $(mrg){{ }}")
             end
             if deceased(gv, dewikify(spouse))
+                spouselink = linkednodelabel(gv, person, spouse)
+                @info("Link to $(spouse) is $(spouselink)")
                 push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg){{ }}")
             else
                 push!(edges, "$(node(spouse)) --> $(mrg){{ }}")
