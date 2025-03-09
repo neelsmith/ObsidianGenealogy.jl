@@ -1,19 +1,27 @@
 
-"""Compose a label for a node in a Mermaid diagram.
+"""Compose a labelled node for a Mermaid diagram from a string `s`. The node ID is formatted with the `nodestring` function, and the value to display in the diagram is the dewikified version of `s`.
 $(SIGNATURES)
 """
-function nodelabel(s)
+function node(s)
     string(nodestring(s), "(", dewikify(s), ")")
 end
 
+
+"""Given a string `s`, create a Mermaid node ID by removing wiki link brackets and replacing white space with safe underscore.
+
+$(SIGNATURES)
+"""
 function nodestring(s)
     replace(dewikify(s), " " => "_")
 end
 
 
+"""Create relative path from a source note to a target note in an Obsidian vault.
+$(SIGNATURES)
+"""
 function linkednodelabel(gv::GenealogyVault, src, target)
     relpath = htmllink(gv, src, target)
-    pathlabel = string("<a href='",relpath,"'>", dewikify(target), "</>")
+    pathlabel = string("<a href='",relpath,"'>", dewikify(target), "'</>")
     
     string(replace(dewikify(target), " " => "_"), "(", pathlabel, ")")
 end
@@ -62,7 +70,11 @@ function ancestor_edges!(v::GenealogyVault, person, edges)
         if hasdata(dad)
 
             #push!(edges, "$(nodelabel(person)) -->  $(nodelabel(dad))")
-            push!(edges, "$(linkednodelabel(v, person, person)) -->  $(linkednodelabel(v, person, dad))")
+            if deceased(v, dewikify(dad))
+                push!(edges, "$(linkednodelabel(v, person, person)) -->  $(linkednodelabel(v, person, dad))")
+            else
+                push!(edges, "$(linkednodelabel(v, person, person)) -->  $(node(dad))")
+            end
             ancestor_edges!(v, dad, edges)
             nodename = replace(dewikify(dad), " " => "_")
             push!(edges, "class $(nodename) father")
@@ -70,7 +82,11 @@ function ancestor_edges!(v::GenealogyVault, person, edges)
 
         if hasdata(mom) #m !== nothing
             #push!(edges, "$(nodelabel(person))  --> $(nodelabel(mom))")
-            push!(edges, "$(linkednodelabel(v,person,person))  --> $(linkednodelabel(v,person,mom))")
+            if deceased(v, dewikify(mom))
+                push!(edges, "$(linkednodelabel(v,person,person))  --> $(linkednodelabel(v,person,mom))")
+            else
+                push!(edges, "$(linkednodelabel(v,person,person))  --> $(node(mom))")
+            end
             ancestor_edges!(v, mom, edges)
             nodename = replace(dewikify(mom), " " => "_")
             push!(edges, "class $(nodename) mother")
@@ -105,12 +121,20 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
 
             @debug("Look for children of $(person) and $(spouse)")
             mrg = replace((string(dewikify(person), "_and_", dewikify(spouse))), " " => "_")
-            push!(edges, "class $(mrg) marriage")
-            #push!(edges, "$(nodelabel(person)) --> $(mrg)[ ]")
-            push!(edges, "$(linkednodelabel(gv, person,person)) --> $(mrg)[ ]")
-            #push!(edges, "$(nodelabel(spouse)) --> $(mrg)(( ))")
-            #push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg)(( ))")
-            push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg){{\" \"}}")
+            push!(edges, "class $(mrg) marriage")      
+            deceased(gv, dewikify(person)) ? @info("$(person) deceased") :  @info("$(person) NOT deceased")
+            if deceased(gv, dewikify(person))
+                push!(edges, "$(linkednodelabel(gv, person, person)) --> $(mrg){{ }}")
+            else
+                
+                push!(edges, "$(node(person)) --> $(mrg){{ }}")
+            end
+            if deceased(gv, dewikify(spouse))
+                push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg){{ }}")
+            else
+                push!(edges, "$(node(spouse)) --> $(mrg){{ }}")
+            end
+
             kids = childrecords(gv, dewikify(person), dewikify(spouse))
             @debug("$(person) and $(spouse) had  $(length(kids)) children")
             for kid in kids
@@ -119,8 +143,11 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
                 push!(edges, "class $(nodestring(kidconclusions.father)) father")
                 push!(edges, "class $(nodestring(kidconclusions.mother)) mother")
                 
-                #push!(edges, "$(mrg)[ ] --> $(nodelabel(kid.name))")
-                push!(edges, "$(mrg){{ }} --> $(linkednodelabel(gv, person, kid.name))")
+                if deceased(gv, dewikify(kid.name))
+                    push!(edges, "$(mrg){{ }} --> $(linkednodelabel(gv, person, kid.name))")
+                else
+                    push!(edges, "$(mrg){{ }} --> $(node(kid.name))")
+                end
                 @debug("Recurse and look for descendants of $(kid.name)")
                 descendant_edges!(gv, kid.name, edges)
             end
