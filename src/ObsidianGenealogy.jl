@@ -39,4 +39,9 @@ export wikify, dewikify
 
 export ancestordiagram, descendantdiagram
 
+
+include("mapview.jl")
+export locations
+
+
 end # module ObsidianGenealogy
