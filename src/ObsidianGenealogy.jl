@@ -41,7 +41,7 @@ export ancestordiagram, descendantdiagram
 
 
 include("mapview.jl")
-export locations
+export locations, limits
 
 
 end # module ObsidianGenealogy

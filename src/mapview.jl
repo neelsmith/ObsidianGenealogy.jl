@@ -15,3 +15,27 @@ function locations(gv::GenealogyVault)
     end
         
 end
+
+
+"""Create a bounding box for a vector of points.
+$(SIGNATURES)
+"""
+function limits(locs; padding = 0.1)
+    maxlat = map(locs) do tpl
+        tpl.lat
+    end |> maximum
+    maxlon = map(locs) do tpl
+        tpl.lon
+    end |> maximum
+
+
+    minlat = map(locs) do tpl
+        tpl.lat
+    end |> minimum
+    minlon = map(locs) do tpl
+        tpl.lon
+    end |> minimum        
+
+    ((minlon, maxlon), (minlat, maxlat))
+
+end
