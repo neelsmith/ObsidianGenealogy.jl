@@ -4,9 +4,13 @@ import Base: show
 
 using Obsidian
 using Documenter, DocStringExtensions
+using Dates
 
-
-
+using Tyler
+using Tyler.TileProviders
+using Tyler.Extents
+using Tyler.MapTiles
+using CairoMakie
 
 include("vault.jl")
 include("utils.jl")
@@ -15,6 +19,7 @@ include("nuclearfamily.jl")
 include("conclusions.jl")
 include("diagrams.jl")
 include("export.jl")
+
 
 
 
@@ -39,9 +44,13 @@ export wikify, dewikify
 
 export ancestordiagram, descendantdiagram
 
-
 include("mapview.jl")
+export PointLocation
 export locations, limits
+include("events.jl")
+export LifeEvent
+export burials, burial
 
+include("timeline.jl")
 
 end # module ObsidianGenealogy
