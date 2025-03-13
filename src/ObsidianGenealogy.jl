@@ -51,9 +51,12 @@ export plotlocations
 
 include("events.jl")
 export LifeEvent
+export lifeevents
+export births, birth
+export deaths, death
 export burials, burial
 export plotevents
-
-include("timeline.jl")
+export plotlife
+export timeline
 
 end # module ObsidianGenealogy
