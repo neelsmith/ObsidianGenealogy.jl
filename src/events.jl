@@ -40,16 +40,6 @@ function burial(gv::GenealogyVault, person)
 end
 
 
-function plotevents(v::Vector{LifeEvent}; minlatextent = 0.1, minlonextent = 0.1, padding = 0.1,
-    ptsize = 50, ptmarker = :xcross
-    )
-    #plotlocations(map(ev -> ev.location, v))
-    eventstoplot = filter(ev -> ! isnothing(ev.location), v)
-    locstoplot = map(ev -> ev.location, eventstoplot)
-    plotlocations(locstoplot; minlatextent = minlatextent, minlonextent = minlonextent, padding = padding, 
-    ptsize = ptsize, ptmarker = ptmarker, ptcolor)
-end
-
 
 pointcolors = Dict(
     :burial => :red,
@@ -59,3 +49,15 @@ pointmarkers = Dict(
     :burial =>  '✝',
     :birth => :circle
 )
+
+
+
+
+function plotevents(v::Vector{LifeEvent}; minlatextent = 0.1, minlonextent = 0.1, padding = 0.1,
+    ptsize = 50, ptmarker = :xcross, ptcolor= :green
+    )
+    eventstoplot = filter(ev -> ! isnothing(ev.location), v)
+    locstoplot = map(ev -> ev.location, eventstoplot)
+    plotlocations(locstoplot; minlatextent = minlatextent, minlonextent = minlonextent, padding = padding, 
+    ptsize = ptsize, ptmarker = ptmarker, ptcolor)
+end

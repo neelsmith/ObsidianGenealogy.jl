@@ -47,9 +47,12 @@ export ancestordiagram, descendantdiagram
 include("mapview.jl")
 export PointLocation
 export locations, limits
+export plotlocations
+
 include("events.jl")
 export LifeEvent
 export burials, burial
+export plotevents
 
 include("timeline.jl")
 
