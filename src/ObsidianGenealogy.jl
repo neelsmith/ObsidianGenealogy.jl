@@ -59,4 +59,8 @@ export plotevents
 export plotlife
 export timeline
 
+
+include("census.jl")
+export uscensusnotes, uscensusevents
+export address, enumeration, date
 end # module ObsidianGenealogy

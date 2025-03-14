@@ -135,14 +135,16 @@ pointcolors = Dict(
     :burial => :red,
     :death => :red,
     :birth => :green,
-    :residence => :blue,
+    :residence => :yellow,
+    :census => :yellow
 )
 
 pointmarkers = Dict(
     :burial =>  '✝',
     :birth => :circle,
-    :death => :cross,
-    :residence => :square
+    :death => :circle,
+    :residence => :square,
+    :census => '⭒'
 )
 
 
