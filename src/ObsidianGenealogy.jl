@@ -46,7 +46,7 @@ export ancestordiagram, descendantdiagram
 
 include("mapview.jl")
 export PointLocation
-export locations, limits
+export locations, limits, location
 export plotlocations
 
 include("events.jl")
@@ -62,5 +62,5 @@ export timeline
 
 include("census.jl")
 export uscensusnotes, uscensusevents
-export address, enumeration, date
+export address, enumeration, date,addresslocation
 end # module ObsidianGenealogy

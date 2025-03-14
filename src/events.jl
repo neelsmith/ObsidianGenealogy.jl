@@ -16,6 +16,7 @@ end
 function lifeevents(gv, person)
     eventlist = vcat(
         birth(gv, person),
+        uscensusevents(gv, person),
         death(gv, person),
         burial(gv,person)
     )
@@ -135,19 +136,26 @@ pointcolors = Dict(
     :burial => :red,
     :death => :red,
     :birth => :green,
-    :residence => :yellow,
-    :census => :yellow
+    :residence => :purple,
+    :census => :blue
 )
 
 pointmarkers = Dict(
     :burial =>  '✝',
-    :birth => :circle,
-    :death => :circle,
-    :residence => :square,
+    :birth => '⊙',
+    :death => '⨁',
+    :residence => '⧇',
     :census => '⭒'
 )
 
 
+pointsize = Dict(
+    :burial => 20,
+    :birth => 20,
+    :death => 10,
+    :residence => 15,
+    :census => 20
+)
 function plotevents(v::Vector{LifeEvent}; minlatextent = 0.1, minlonextent = 0.1, padding = 0.1,
     ptsize = 50, ptmarker = :xcross, ptcolor= :green
     )
@@ -162,7 +170,8 @@ function plotlife(gv, person;
     minlonextent = 0.02, padding = 0.01, 
     ptsize = 20)
 
-    provider = TileProviders.Esri(:WorldImagery);
+    provider = TileProviders.Esri(:WorldGrayCanvas);
+    #provider = TileProviders.CartoDB()
 
     events = filter(ev -> !isnothing(ev.location), lifeevents(gv, person))
     @info("Events for $(person): $(events)")
@@ -184,7 +193,7 @@ function plotlife(gv, person;
     @info("Plot locations padded by $(padding) yields limits $(ext) ")
 
 
-    fig = Figure(;)
+    fig = Figure(; size = (800,600))
     ax = Axis(fig[1,1])
     m = Tyler.Map(ext; provider, figure=fig, axis=ax);
     wait(m)
@@ -193,9 +202,10 @@ function plotlife(gv, person;
 
 
     for ev in filter(ev -> ! isnothing(ev.location), events)
+        @info("Plotting $(ev.caption) ...")
         pts = Point2f(MapTiles.project((ev.location.lon, ev.location.lat), MapTiles.wgs84, MapTiles.web_mercator))
         objscatter = scatter!(m.axis, pts; color = pointcolors[ev.role],
-        marker = pointmarkers[ev.role], markersize = ptsize)
+        marker = pointmarkers[ev.role], markersize = pointsize[ev.role])
     end
    
     fig

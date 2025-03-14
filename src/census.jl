@@ -43,11 +43,15 @@ function uscensusevent(gv::GenealogyVault, trip::NoteKV)
     @debug("Event from $(trip)")    
     
     wikiname = trip.wikiname
-    caption = wikiname
+    caption = "Census event: " * wikiname
     person = dewikify(trip.value)
     role = :census
-    location = nothing
 
+
+
+    @debug("Get location for $(wikiname)")
+    location = addresslocation(gv, wikiname) #nothing
+    @debug("Got $(location) ($(typeof(location)))")
     #addr = address(gv, trip)
     LifeEvent(wikiname, caption, person, role, dateval, location, "")
 end
@@ -186,9 +190,39 @@ function address(gv::GenealogyVault, censusnote::AbstractString)
        tr.wikiname == censusnote && tr.key == "address"
     end
     if isempty(matches) 
-        @info("Use enumeration if no address")
+        @debug("Use enumeration if no address")
         enumeration(gv, censusnote)
     else 
-        dewikify(matches[1].value)
+        addr = dewikify(matches[1].value)
+    end
+end
+
+
+"""Find geographic location for a census record's address value.
+If a specific address is not record, try using the enmeration as a proxy.
+$(SIGNATURES)
+"""
+function addresslocation(gv::GenealogyVault, censusnote::AbstractString)
+    addr = address(gv, censusnote)
+    @info("Addr for $(censusnote) is $(addr)")
+    locc = location(gv, addr)
+    if isempty(locc)
+        @debug("No location for $(addr): try proxy")
+        proxylocc = filter(t -> t.wikiname == addr && t.key == "proxylocation", kvtriples(gv.vault))
+        @debug("Proxies $(proxylocc)")
+        if isempty(proxylocc)
+            @warn("No proxy location for $(addr)")
+            nothing
+        else
+            @debug("Get location for $(dewikify(proxylocc[1].value))")
+            proxypoints = location(gv, dewikify(proxylocc[1].value))
+            @debug("Type = $(typeof(proxypoints))")
+            proxypoints[1]
+        end
+
+
+    else
+        # Found address!
+        locc[1]
     end
 end

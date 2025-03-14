@@ -14,13 +14,22 @@ $(SIGNATURES)
 function locations(gv::GenealogyVault)
     triplelist = filter(trip -> trip.key == "location" && (! isnothing(trip.value)), kvtriples(gv.vault))
     map(triplelist) do triple
-        loc = triple.value
+        loc = dewikify(triple.value)
         lat = typeof(loc[1]) <: Number ? loc[1] : parse(Float64, strip(loc[1]))
         lon = typeof(loc[2]) <: Number ? loc[2] : parse(Float64, strip(loc[2]))
         PointLocation(triple.wikiname, lat, lon)
     end      
 end
 
+"""Find a tagged point location in a vault.
+$(SIGNATURES)
+"""
+function location(gv, wikiname)
+    locs = locations(gv)
+    filter(locs) do loc
+        loc.wikiname == wikiname
+    end
+end
 
 """Create a bounding box for a vector of points.
 $(SIGNATURES)
@@ -51,7 +60,7 @@ function plotlocations(v::Vector{PointLocation};
     minlatextent = 0.02, minlonextent = 0.02, padding = 0.01, 
     ptsize = 50, ptmarker = :xcross, ptcolor = :green)
 
-    provider = TileProviders.Esri(:WorldImagery);
+    provider = TileProviders.Esri(:WorldGrayCanvas);
     lims = limits(v)
     
     (x1, x2) = lims[:X]
@@ -69,7 +78,7 @@ function plotlocations(v::Vector{PointLocation};
     
     ext = Extent(X = (x1, x2), Y = (y1, y2))
     @info("Plot locations with padded limits $(ext) ")
-    fig = Figure(; size = (1200,600))
+    fig = Figure(; size = (800,600))
     ax = Axis(fig[1,1])
     m = Tyler.Map(ext; provider, figure=fig, axis=ax);
     wait(m)
