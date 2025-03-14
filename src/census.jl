@@ -173,6 +173,8 @@ end
 function address(gv::GenealogyVault, censusnote::NoteKV)
     address(gv, censusnote.wikiname) 
 end
+=#
+
 
 
 """Find the census address for a named census note.
@@ -183,5 +185,10 @@ function address(gv::GenealogyVault, censusnote::AbstractString)
     matches = filter(kvtriples(gv.vault)) do tr
        tr.wikiname == censusnote && tr.key == "address"
     end
-    isempty(matches) ? nothing : dewikify(matches[1].value)
-end=#
+    if isempty(matches) 
+        @info("Use enumeration if no address")
+        enumeration(gv, censusnote)
+    else 
+        dewikify(matches[1].value)
+    end
+end
