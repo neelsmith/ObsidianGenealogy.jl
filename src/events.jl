@@ -151,7 +151,7 @@ pointmarkers = Dict(
 
 pointsize = Dict(
     :burial => 20,
-    :birth => 20,
+    :birth => 15,
     :death => 10,
     :residence => 15,
     :census => 20
@@ -192,25 +192,41 @@ function plotlife(gv, person;
     @info("Plot locations padded by $(padding) yields limits $(ext) ")
 
 
-    fig = Figure(size = (300,200))
+    fig = Figure(size = (500,250))
     ax = Axis(fig[1,1])
     m = Tyler.Map(ext; provider, figure=fig, axis=ax);
     wait(m)
     hidespines!(m.axis)
     hidedecorations!(m.axis)
+    
 
-
-    for ev in filter(ev -> ! isnothing(ev.location), events)
-        @info("Plotting $(ev.caption) ...")
-        pts = Point2f(MapTiles.project((ev.location.lon, ev.location.lat), MapTiles.wgs84, MapTiles.web_mercator))
-        objscatter = scatter!(m.axis, pts; color = pointcolors[ev.role],
-        marker = pointmarkers[ev.role], markersize = pointsize[ev.role])
+    roles = map(e -> e.role, events) |> unique
+    scatters = []
+    labels = []
+    for r in roles    
+        push!(labels, rolelabel(r))
+        eventdata = filter(ev -> ev.role == r && !isnothing(ev.location), events)
+        @info(eventdata)
+        pts = map(ev -> Point2f(MapTiles.project((ev.location.lon, ev.location.lat), MapTiles.wgs84, MapTiles.web_mercator)), eventdata)
+        push!(scatters, scatter!(m.axis, pts; color = pointcolors[r], marker = pointmarkers[r], markersize = pointsize[r]))
     end
-   
+    
+    
+    Legend(fig[1,2], 
+        scatters, 
+        labels
+    )
     fig
 end
 
-
+function rolelabel(role)
+    role == :birth ? "Birth" :
+    role == :death ? "Death" :
+    role == :burial ? "Burial" :
+    role == :census ? "Census" :
+    role == :residence ? "Residence" :
+    "Unknown"
+end
 """Compile a list of dated events for a person, sorted by date.
 $(SIGNATURES)
 """
