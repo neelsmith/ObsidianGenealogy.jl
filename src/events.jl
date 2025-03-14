@@ -156,7 +156,8 @@ pointsize = Dict(
     :residence => 15,
     :census => 20
 )
-function plotevents(v::Vector{LifeEvent}; minlatextent = 0.1, minlonextent = 0.1, padding = 0.1,
+function plotevents(v::Vector{LifeEvent}; 
+    minlatextent = 0.1, minlonextent = 0.1, padding = 0.1,
     ptsize = 50, ptmarker = :xcross, ptcolor= :green
     )
     eventstoplot = filter(ev -> ! isnothing(ev.location), v)
@@ -166,9 +167,7 @@ function plotevents(v::Vector{LifeEvent}; minlatextent = 0.1, minlonextent = 0.1
 end
 
 function plotlife(gv, person; 
-    minlatextent = 0.02, 
-    minlonextent = 0.02, padding = 0.01, 
-    ptsize = 20)
+    padding = 0.04)
 
     provider = TileProviders.Esri(:WorldGrayCanvas);
     #provider = TileProviders.CartoDB()
@@ -181,19 +180,19 @@ function plotlife(gv, person;
     
     (x1, x2) = lims[:X]
     (y1, y2) = lims[:Y]
-    #if (x2 - x1) < minlonextent
-        x1 -= padding
-        x2 += padding
-    #end
-    #if (y2 - y1) < minlatextent
-        y1 -= padding
-        y2 += padding
-    #end
+    
+    x1 -= padding
+    x2 += padding
+    
+    
+    y1 -= padding
+    y2 += padding
+    
     ext = Extent(X = (x1, x2), Y = (y1, y2))
     @info("Plot locations padded by $(padding) yields limits $(ext) ")
 
 
-    fig = Figure(; size = (800,600))
+    fig = Figure(size = (300,200))
     ax = Axis(fig[1,1])
     m = Tyler.Map(ext; provider, figure=fig, axis=ax);
     wait(m)
