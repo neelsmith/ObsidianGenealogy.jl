@@ -416,10 +416,11 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     @debug("Embedded descendant diagram")
     
     datedevts = timeline(gv, person)
+    @info("Dated events: $(datedevts)")
     if ! isempty(datedevts)
         push!(pagelines, "## Dated events\n\n")
-        for e in evts
-            push!(pagelines, "- $(e.date) $(e.caption)")
+        for e in datedevts
+            push!(pagelines, "- " * e)
         end
         push!(pagelines, "\n")
     end

@@ -111,7 +111,7 @@ end
 $(SIGNATURES)
 """
 function descendant_edges!(gv::GenealogyVault, person, edges)
-    @info("Looking for $(person)'s descendants")
+    @debug("Looking for $(person)'s descendants")
     if isnothing(person)
         # nothing
     else
@@ -131,7 +131,7 @@ function descendant_edges!(gv::GenealogyVault, person, edges)
             end
             if deceased(gv, dewikify(spouse))
                 spouselink = linkednodelabel(gv, person, spouse)
-                @info("Link to $(spouse) is $(spouselink)")
+                @debug("Link to $(spouse) is $(spouselink)")
                 push!(edges, "$(linkednodelabel(gv, person, spouse)) --> $(mrg){{ }}")
             else
                 push!(edges, "$(node(spouse)) --> $(mrg){{ }}")

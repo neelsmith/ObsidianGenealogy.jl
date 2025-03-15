@@ -25,7 +25,22 @@ end
 
 
 function death(gv, person)
-    filter(ev -> ev.person == dewikify(person), deaths(gv))
+    concll = conclusions(gv, person)
+    @debug("Death conlcusion for $(person): $(concll.death)")
+    deathmatches = filter(ev -> ev.person == dewikify(person), deaths(gv))
+    @debug("Death events: $(deathmatches) type $(typeof(deathmatches))")
+
+    verifieddate = filter(deathmatches) do d
+        try 
+            @debug("Compare d.date with $(Date(concll.death))")
+            tf = d.date == Date(concll.death)
+            @debug("Match? $(tf)")
+            tf
+        catch e
+            #@warn("Couldn't make a date out of $()")
+            false
+        end
+    end
 end
 
 
@@ -93,7 +108,23 @@ end
 
 
 function birth(gv, person)
-    filter(ev -> ev.person == dewikify(person), births(gv))
+    
+
+    concll = conclusions(gv, person)
+    @debug("Birth conlcusion: $(concll.birth)")
+    birthmatches = filter(ev -> ev.person == dewikify(person), births(gv))
+    #@info("List: $(deathmatches)")
+    verifieddate = filter(birthmatches) do d
+        
+        try 
+            @debug("Compare d.date with $(Date(concll.birth))")
+            tf = d.date == Date(concll.birth)
+            @debug("Match? $(tf)")
+            tf
+        catch e
+            false
+        end
+    end
 end
 
 """Collect all birth events in a genealogy vault.
@@ -150,7 +181,7 @@ pointmarkers = Dict(
 
 
 pointsize = Dict(
-    :burial => 20,
+    :burial => 15,
     :birth => 15,
     :death => 10,
     :residence => 15,
@@ -167,7 +198,7 @@ function plotevents(v::Vector{LifeEvent};
 end
 
 function plotlife(gv, person; 
-    padding = 0.04)
+    padding = 0.2)
 
     provider = TileProviders.Esri(:WorldGrayCanvas);
     #provider = TileProviders.CartoDB()
@@ -234,9 +265,13 @@ function timeline(gv, person)
     events = filter(lifeevents(gv, person)) do ev
         ! isnothing(ev.date)
     end
-
-    sort!(events, by = ev -> ev.date)
-    for ev in events
-        @info("$(ev.date) $(ev.caption)")
+    if isempty(events)
+        []
+    else
+        sort!(events, by = ev -> ev.date)
+        map(events) do ev
+            #@info("$(ev.date) $(ev.caption)")
+            string(ev.date, " ", ev.caption)
+        end
     end
 end
