@@ -31,7 +31,7 @@ export birthrecords, deathrecords
 export parentrecords, childrecords, partners
 export father, mother
 
-export noteson, vitals
+export noteson, vitals, sources
 
 export evidenceforbirth, evidencefordeath
 export evidenceformother, evidenceforfather, evidenceforchild

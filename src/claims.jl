@@ -107,3 +107,12 @@ function motherlist(gv::GenealogyVault)
 
     motherstructure.(mothers)
 end
+
+
+
+function sources(gv, person)
+    filter(kvtriples(gv.vault)) do tr
+        tr.key == "refersto" &&
+        tr.value == wikify(person)
+    end
+end

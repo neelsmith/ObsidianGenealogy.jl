@@ -416,7 +416,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     @debug("Embedded descendant diagram")
     
     datedevts = timeline(gv, person)
-    @info("Dated events: $(datedevts)")
+    @debug("Dated events: $(datedevts)")
     if ! isempty(datedevts)
         push!(pagelines, "## Dated events\n\n")
         for e in datedevts
@@ -471,6 +471,15 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
         end
     end
 
+
+
+    allsources = sources(gv, person)
+    if ! isempty(allsources)
+        push!(pagelines, "## All sources for $(person)\n\n")
+        for src in allsources
+            push!(pagelines, "- " * src.wikiname)
+        end
+    end
 
 
     pagetext = join(pagelines, "\n")
