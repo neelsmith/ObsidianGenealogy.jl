@@ -419,13 +419,13 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     if ! isempty(evts)
         push!(pagelines, "## Events\n\n")
         for e in evts
-            push!(pagelines, "- $(e.caption)")
+            push!(pagelines, "- $(e.date) $(e.caption)")
         end
         push!(pagelines, "\n")
         # check for map
         mapfile = replace(dest, ".qmd" => "_events.png")
         if isfile(mapfile)
-            @info("BUILD LINK TO MAP")
+            @debug("BUILD LINK TO MAP")
             push!(pagelines, "![ ](./$(basename(mapfile)))")
             push!(pagelines, "\n\n")
         end

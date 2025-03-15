@@ -204,7 +204,7 @@ $(SIGNATURES)
 """
 function addresslocation(gv::GenealogyVault, censusnote::AbstractString)
     addr = address(gv, censusnote)
-    @info("Addr for $(censusnote) is $(addr)")
+    @debug("Addr for $(censusnote) is $(addr)")
     locc = location(gv, addr)
     if isempty(locc)
         @debug("No location for $(addr): try proxy")
