@@ -339,6 +339,7 @@ function pageheader(person)
     push!(pagelines, "")
 
     push!(pagelines,"# $(person)\n\n")
+    
     pagelines
 end
 
@@ -379,7 +380,10 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     dest = outputfilename(gv, person, outputdir)
     pagelines = pageheader(person)
     @debug("Make page for $(person)")
+
+
     basicdata = formatconclusions(gv, person)
+    push!(pagelines, "## Biographical summary\n\n")
     for ln in basicdata
         push!(pagelines, ln)
     end
@@ -435,7 +439,7 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
 
 
     if hasconclusions(basics)
-        push!(pagelines, "## Sources")
+        push!(pagelines, "## Sources for preceding conclusions")
     end
     if hasdata(basics.birth)
         push!(pagelines, "Sources for birth:\n\n")
@@ -477,7 +481,9 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     if ! isempty(allsources)
         push!(pagelines, "## All sources for $(person)\n\n")
         for src in allsources
-            push!(pagelines, "- " * src.wikiname)
+            srclink = ObsidianGenealogy.htmllink(gv, person, src.wikiname)
+            linkedref = string("[", src.wikiname, "](",srclink, ")")
+            push!(pagelines, "- " * linkedref)
         end
     end
 

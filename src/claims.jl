@@ -111,8 +111,10 @@ end
 
 
 function sources(gv, person)
+    alldocs = documents(gv)
     filter(kvtriples(gv.vault)) do tr
         tr.key == "refersto" &&
-        tr.value == wikify(person)
+        tr.value == wikify(person) &&
+        tr.wikiname in alldocs
     end
 end
