@@ -415,22 +415,23 @@ function makepersonpage(gv::GenealogyVault, person, outputdir)
     end
     @debug("Embedded descendant diagram")
     
-    evts = lifeevents(gv, person)
-    if ! isempty(evts)
-        push!(pagelines, "## Events\n\n")
+    datedevts = timeline(gv, person)
+    if ! isempty(datedevts)
+        push!(pagelines, "## Dated events\n\n")
         for e in evts
             push!(pagelines, "- $(e.date) $(e.caption)")
         end
         push!(pagelines, "\n")
-        # check for map
-        mapfile = replace(dest, ".qmd" => "_events.png")
-        if isfile(mapfile)
-            @debug("BUILD LINK TO MAP")
-            push!(pagelines, "![ ](./$(basename(mapfile)))")
-            push!(pagelines, "\n\n")
-        end
-
     end
+   
+    # check for added map:
+    mapfile = replace(dest, ".qmd" => "_events.png")
+    if isfile(mapfile)
+        @debug("BUILD LINK TO MAP")
+        push!(pagelines, "![ ](./$(basename(mapfile)))")
+        push!(pagelines, "\n\n")
+    end
+
 
     if hasconclusions(basics)
         push!(pagelines, "## Sources")

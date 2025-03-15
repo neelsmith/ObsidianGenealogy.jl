@@ -146,10 +146,24 @@ $(SIGNATURES)
 function date(gv::GenealogyVault, censusnote)
     
     matches = filter(kvtriples(gv.vault)) do tr
-       tr.wikiname == censusnote && tr.key == "Date" #"Ebenezer White 1850 census"
+       tr.wikiname == censusnote && tr.key == "Date"
     end
     if isempty(matches)
-        nothing
+        # Try proxy
+        proxymatches = filter(kvtriples(gv.vault)) do tr
+            tr.wikiname == censusnote && tr.key == "censusyear"
+        end
+        if isempty(proxymatches)
+            nothing
+        else
+            stringdate =  proxymatches[1].value
+            try 
+                dateval = Date(stringdate)
+            catch e
+                stringdate
+            end
+        end
+
     else
         stringdate =  matches[1].value
         try 
