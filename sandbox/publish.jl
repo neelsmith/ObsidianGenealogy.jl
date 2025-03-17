@@ -6,7 +6,9 @@ destdir = "/Users/nsmith/Desktop/family-site/quart-personal/familyhistory/source
 # To publish private:
 privatedest = "/Users/nsmith/Dropbox/_current_projects/_genealogy/_privateexport/familyhistory/sources"
 
-vaultdir = "/Users/nsmith/Dropbox/_obsidian/family-history"
+
+vaultdir = "/Users/nsmith/Desktop/family-site/family-history-vault"
+#vaultdir = "/Users/nsmith/Dropbox/_obsidian/family-history"
 
 gv = Vault(vaultdir) |> genealogyVault
 
