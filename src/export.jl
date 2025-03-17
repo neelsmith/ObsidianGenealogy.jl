@@ -1,3 +1,62 @@
+
+function indeximages(gv::GenealogyVault, dir, outroot)
+    @debug("Build index for images in $(outroot) from $(dir)")
+    trimname = replace(replace(dir, gv.vault.root => ""), r"^/" => "")
+    items = ["---", "engine: julia", "---", "", "# Images in directory `$(trimname)`", ""]
+    for name in readdir(dir)
+        fullpath = joinpath(dir, name)
+        if isdir(fullpath)
+            @debug("Descend dir $(name) later...")
+
+        elseif endswith(name, ".qmd") || endswith(name, ".md")
+    
+            img = replace(name, r".q?md$" => "")
+
+            matches = filter(kvtriples(gv.vault)) do tr
+                tr.wikiname == img && tr.key == "caption"
+            end
+            caption = isempty(matches) ? "image" : matches[1].value
+
+            @debug("index img $(img): $(caption)")
+            renamed = replace(replace(name, "_" => " "), r".q?md$" => "")
+            target = replace(replace(name, r".q?md$" => ".html"), " " => "_")
+            item = string("- [$(renamed)](./$(target)): $(caption)")
+            push!(items, item)
+           end
+    end
+
+    subdirs = []
+    for name in readdir(dir)
+        fullpath = joinpath(dir, name)
+        outpath = joinpath(outroot, name)
+        if isdir(fullpath)
+            @debug("Descending dir $(name) later...")
+            indeximages(gv, fullpath, outpath)
+            push!(subdirs, name)
+        end
+    end
+    if ! isempty(subdirs)
+        push!(items, "\n")
+        push!(items, "## Further lists images\n\n")
+        
+        for dir in subdirs
+            cleanname = replace(dir, " " => "_")
+            @debug("Subdir $(dir)")
+            push!(items, "- [$(dir)](./$(cleanname)/)")
+        end
+    end
+
+    outdir = replace(outroot, " " => "_")
+    indexfile = joinpath(outdir, "index.qmd")
+    if ! isdir(outdir)
+        mkdir(outdir)
+    end
+    open(indexfile,"w") do io
+        write(io, join(items, "\n"))
+    end
+    @debug("Wrote $(indexfile)")
+end
+
 """Recursively compose `index.qmd` files with lists of links for all directories beginning from `dir`.
 $(SIGNATURES)
 """
@@ -12,7 +71,7 @@ function buildindexfiles(dir, outroot)
         elseif endswith(name, ".qmd") || endswith(name, ".md")
             if name != "index.qmd"
                 @debug("index MD file $(name)")
-                renamed = replace(replace(name, "_" => " "), r".q?md$" => "")
+                renamed = replace(replace(replace(name, "_" => " "), r".q?md$" => ""), " " => "_")
                 target = replace(replace(name, r".q?md$" => ".html"), " " => "_")
                 push!(items, string("- [$(renamed)](./$(target))"))
             end
@@ -161,11 +220,16 @@ function exportvault(genvault::GenealogyVault, outdir; publiconly = true)
     lastnameindex(genvault, outdir)
 
     # add indices to transcriptions:
-    xcrsroot = joinpath(genvault.vault.root, "transcriptions")
-    xcrsoutput = joinpath(outdir, "transcriptions")
+    xcrsroot = joinpath(genvault.vault.root, genvault.documents)
+    xcrsoutput = joinpath(outdir, genvault.documents)
     @debug("Add indices to $(xcrsoutput)")
     buildindexfiles(xcrsroot, xcrsoutput)
-    
+
+
+    # add indices to images:
+    imgsroot = joinpath(genvault.vault.root, genvault.images)
+    imgsoutput =  joinpath(outdir, genvault.images)
+    indeximages(genvault, imgsroot, imgsoutput)
 end
 
 
