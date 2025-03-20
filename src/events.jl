@@ -96,7 +96,9 @@ function birthevent(gv, birthrec)
         nothing
     end
 
+    @debug("BIRTH PLACE? evt $(birthrec)")
     placematches = filter(locations(gv)) do loc
+        
         loc.wikiname == dewikify(birthrec.place)
     end
 

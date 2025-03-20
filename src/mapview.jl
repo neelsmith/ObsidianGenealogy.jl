@@ -14,7 +14,13 @@ $(SIGNATURES)
 function locations(gv::GenealogyVault)
     triplelist = filter(trip -> trip.key == "location" && (! isnothing(trip.value)), kvtriples(gv.vault))
     map(triplelist) do triple
-        loc = dewikify(triple.value)
+        loc = triple.value isa String ? split(triple.value, ",") : triple.value
+
+ 
+        @debug("TRIPLE $(triple)")
+        #loc = dewikify(triple.value)
+        @debug("LOC? $(loc) type $(typeof(loc))")
+
         lat = typeof(loc[1]) <: Number ? loc[1] : parse(Float64, strip(loc[1]))
         lon = typeof(loc[2]) <: Number ? loc[2] : parse(Float64, strip(loc[2]))
         PointLocation(triple.wikiname, lat, lon)
