@@ -6,6 +6,8 @@ using Obsidian
 using Documenter, DocStringExtensions
 using Dates
 
+using Downloads
+
 using Tyler
 using Tyler.TileProviders
 using Tyler.Extents
@@ -63,4 +65,10 @@ export timeline
 include("census.jl")
 export uscensusnotes, uscensusevents
 export address, enumeration, date,addresslocation
+
+
+include("censusio.jl")
+include("censustables.jl")
+export Census1850, census1850, census1850table
+
 end # module ObsidianGenealogy
