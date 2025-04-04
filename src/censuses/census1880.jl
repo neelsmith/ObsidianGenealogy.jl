@@ -8,7 +8,7 @@ struct Census1880 <: CensusRecord
     givenname::String
     race::Union{Char, Nothing}
     gender::Union{Char, Nothing}
-    age::Int 
+    age::Union{Int, Nothing}
     birthyear::Int
     relation::String
     marital::String
@@ -135,5 +135,22 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
 
 end
 
-function census1880table()
+
+"""Download and parse the 1880 US Census data for a given enumeration and year.
+$(SIGNATURES)
+"""
+function census1880table(enumeration::Symbol)
+    # Read census data from a URL
+    url = censusurl(enumeration, 1880)
+    if isnothing(url)
+        @warn("No URL found for enumeration: $enumeration and year: $year")
+        return nothing
+    end
+
+    f = Downloads.download(url)
+    data = readlines(f)[2:end]
+    rm(f)
+    # Parse each line into a Census1880 object
+    records = [census1880(line, enumeration) for line in data if !isempty(line)]
+    filter(rec -> ! isnothing(rec), records)
 end
