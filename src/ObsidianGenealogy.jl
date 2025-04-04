@@ -70,5 +70,7 @@ export address, enumeration, date,addresslocation
 include("censusio.jl")
 include("censustables.jl")
 export Census1850, census1850, census1850table
+export Census1880, census1880, census1880table
+
 
 end # module ObsidianGenealogy

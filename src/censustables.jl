@@ -1,6 +1,7 @@
 abstract type CensusRecord end
 
 
+
 struct Census1850 <: CensusRecord
     #PageLine|Structure|Family|Given|Surname|Age|BirthYear|Gender|Race|Occupation|Industry|Value|BirthPlace|MarriedThisYear|AttendedSchool|Illiterate|Condition
     structure::Int
@@ -22,12 +23,13 @@ struct Census1850 <: CensusRecord
     enumeration::String
 end
 
-
-
-function census1850table(enumeration::Symbol, year::Int)
+"""Download and parse the 1850 US Census data for a given enumeration and year.
+$(SIGNATURES)
+"""
+function census1850table(enumeration::Symbol)
     # Read census data from a URL
-    url = censusurl(enumeration, year)
-    if url == nothing
+    url = censusurl(enumeration, 1850)
+    if isnothing(url)
         @warn("No URL found for enumeration: $enumeration and year: $year")
         return nothing
     end
@@ -35,13 +37,11 @@ function census1850table(enumeration::Symbol, year::Int)
     f = Downloads.download(url)
     data = readlines(f)[2:end]
     rm(f)
-    
-    
-
     # Parse each line into a Census1850 object
     records = [census1850(line, enumeration) for line in data if !isempty(line)]
     filter(rec -> ! isnothing(rec), records)
 end
+
 """Read a single record for the 1850 US Census from a delimited string.
 
 $(SIGNATURES)
