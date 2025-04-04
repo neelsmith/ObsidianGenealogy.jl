@@ -69,6 +69,7 @@ export address, enumeration, date,addresslocation
 
 include("censusio.jl")
 include("censustables.jl")
+include("censuses/census1880.jl")
 export Census1850, census1850, census1850table
 export Census1880, census1880, census1880table
 
