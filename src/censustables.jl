@@ -1,114 +1,46 @@
 abstract type CensusRecord end
 
-
-
-struct Census1850 <: CensusRecord
-    #PageLine|Structure|Family|Given|Surname|Age|BirthYear|Gender|Race|Occupation|Industry|Value|BirthPlace|MarriedThisYear|AttendedSchool|Illiterate|Condition
-    structure::Int
-    family::Int
-    givenname::String
-    surname::String
-    age::Int 
-    birthyear::Int
-    gender::Union{Char, Nothing}
-    race::Union{Char, Nothing}
-    occupation::String
-    industry::String
-    realesate::Union{Int, Nothing}
-    birthplace::String
-    marriedthisyear::Bool
-    attendedschool::Bool
-    illiterate::Bool
-    condition::String
-    enumeration::String
+function dwelling(rec::T) where T <: CensusRecord
+    @warn("dwelling is not implemented for $(typeof(rec))")
+    return nothing
+ end
+function family(rec::T) where T <: CensusRecord
+   @warn("family is not implemented for $(typeof(rec))")
+   return nothing
 end
 
-"""Download and parse the 1850 US Census data for a given enumeration and year.
+"""Catch all for dispatch of CensusRecord types.
 $(SIGNATURES)
 """
-function census1850table(enumeration::Symbol)
-    # Read census data from a URL
-    url = censusurl(enumeration, 1850)
-    if isnothing(url)
-        @warn("No URL found for enumeration: $enumeration and year: $year")
-        return nothing
-    end
-
-    f = Downloads.download(url)
-    data = readlines(f)[2:end]
-    rm(f)
-    # Parse each line into a Census1850 object
-    records = [census1850(line, enumeration) for line in data if !isempty(line)]
-    filter(rec -> ! isnothing(rec), records)
+function givenname(rec::T) where T <: CensusRecord
+   @warn("givenname is not implemented for $(typeof(rec))")
+   return nothing
 end
 
-"""Read a single record for the 1850 US Census from a delimited string.
+function surname(rec::T) where T <: CensusRecord
+    @warn("surname is not implemented for $(typeof(rec))")
+    return nothing
+ end
 
-$(SIGNATURES)
-"""
-function census1850(delimited, enumeration::Symbol; delimiter = "|")
-    # Parse the delimited string into a Census1850 object
-    cols = split(delimited, delimiter)
-    if length(cols) < 17
-        @warn("Invalid number of columns in census record: $delimited")
-        return nothing
-    end
-    # Extract the columns
-    
-    (rownumber, structraw, familyraw, 
-    givenname, surname,
-    ageraw, birthyearraw,
-    genderraw, raceraw,
-    occupation, industry,
-    realesateraw, birthplace,
-    marriedthisyearraw, attendedschoolraw,
-    illiterateraw, condition) = cols
 
-    
-    structure = try 
-        parse(Int, structraw)
-    catch e
-        @warn("Failed to parse structure: $structraw")
-        nothing
-    end
-    family = try 
-        parse(Int, familyraw)
-    catch e
-        @warn("Failed to parse family: $familyraw")
-        nothing
-    end
-    age = try 
-        parse(Int, ageraw)
-    catch e
-        nothing
-    end
-    birthyear = try 
-        parse(Int, birthyearraw)
-    catch e
-        nothing
-    end
-    gender = genderraw[1] in ['M', 'F'] ? genderraw[1] : nothing
-    race = raceraw[1] in ['W', 'B', 'M', 'I', 'C'] ? raceraw[1] : nothing
-    realesate = try 
-        parse(Int, realesateraw)
-    catch e
-        nothing
-    end
-    marriedthisyear = isempty(marriedthisyearraw) ? false : true
-    attendedschool = isempty(attendedschoolraw) ? false : true
-    illiterate = isempty(illiterateraw) ? false : true
+function birthyear(rec::T) where T <: CensusRecord
+   @warn("birthyear is not implemented for $(typeof(rec))")
+   return nothing
+end 
 
-    try
-        Census1850(structure, family, givenname, surname, 
-        age, birthyear, gender, race, occupation, industry,
-        realesate, birthplace, marriedthisyear, attendedschool,
-        illiterate, condition,
-        censuslabels[enumeration]
-        )
-      
-    catch e
-        @warn("Failed to parse census record: $delimited")
-        return nothing
-    end
-    
+
+function gender(rec::T) where T <: CensusRecord
+    @warn("gender is not implemented for $(typeof(rec))")
+    return nothing
 end
+
+function race(rec::T) where T <: CensusRecord
+    @warn("race is not implemented for $(typeof(rec))")
+    return nothing
+end
+function occupation(rec::T) where T <: CensusRecord
+    @warn("occupation is not implemented for $(typeof(rec))")
+    return nothing
+end
+
+

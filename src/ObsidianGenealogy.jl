@@ -62,15 +62,15 @@ export plotlife
 export timeline
 
 
-include("census.jl")
+include("censusvault.jl")
 export uscensusnotes, uscensusevents
 export address, enumeration, date,addresslocation
 
-
 include("censusio.jl")
 include("censustables.jl")
-include("censuses/census1880.jl")
+include("censuses/census1850.jl")
 export Census1850, census1850, census1850table
+include("censuses/census1880.jl")
 export Census1880, census1880, census1880table
 
 
