@@ -41,10 +41,14 @@ function readable(c::Census1880)
             c.race, " ", c.gender, 
             ", born ", c.birthyear, " in ", c.birthplace,
             " (", c.age, " in 1880). ",
-  
-            "Role in household: ", c.relation, ". "
+            "Household $(c.dwelling). "
+           
         )
         additions = []
+
+        if ! isempty(c.relation)
+            push!(additions, string("Role in household: ", c.relation, ". "))
+        end
         if ! isempty(c.motherbirthplace)
             push!(additions, "Mother born in $(c.motherbirthplace). ")
         end
@@ -100,7 +104,9 @@ function readable(c::Census1880)
        
 end
 
-
+"""Parse a single 1880 census record from a row of delimited-text data.
+$(SIGNATURES)
+"""
 function census1880(delimited, enumeration::Symbol; delimiter = "|")
     cols = split(delimited, delimiter)
     if length(cols) < 27
@@ -185,7 +191,6 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
                 )
 =#
 
-  
         Census1880(street, dwelling, 
         surname, givenname, 
         race, gender, age, birthyear,
