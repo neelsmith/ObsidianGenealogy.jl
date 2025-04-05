@@ -15,7 +15,7 @@ struct Census1880 <: CensusRecord
     marriedthisyear::Bool    
     occupation::String
     monthsunemployed::Int
-    sick::String
+    sickness::String
     blind::Bool
     deaf_dumb::Bool
     idiotic::Bool
@@ -29,6 +29,61 @@ struct Census1880 <: CensusRecord
     motherbirthplace::String
     # The enumeration is the name of the census district
     enumeration::String
+end
+
+
+function dwelling(rec::Census1880)
+    rec.dwelling
+ end
+
+function family(rec::Census1880)
+    rec.family
+ end
+ 
+
+
+function givenname(rec::Census1880)
+    rec.givenname
+end
+function surname(rec::Census1880)
+    rec.surname
+end
+function birthyear(rec::Census1880)
+    rec.birthyear
+end
+
+function birthplace(rec::Census1880)
+    rec.birthplace
+ end 
+
+function gender(rec::Census1880)
+    rec.gender
+end
+
+
+
+function race(rec::Census1880)
+    rec.race
+end
+
+function occupation(rec::Census1880)
+    rec.occupation
+end
+
+
+function relation(rec::Census1880)
+    rec.relation
+end
+
+function maritalstatus(rec::Census1880)
+    rec.marital
+end
+
+function monthsunemployed(rec::Census1880)
+    rec.monthsunemployed
+end
+function sickness(rec::Census1880)
+    rec.sickness
 end
 
 """Format a string with a readable summary of a complete 1880 census entry.
@@ -64,8 +119,8 @@ function readable(c::Census1880)
             push!(additions, "Unemployed $(c.monthsunemployed) months. ")
         end
 
-        if ! isempty(c.sick)
-            push!(additions, "Illness: $(c.sick). ")
+        if ! isempty(c.sickness)
+            push!(additions, "Illness: $(c.sickness). ")
         end
 
         if c.blind

@@ -77,4 +77,9 @@ export Census1880, census1880, census1880table
 export givenname, surname, gender, race, occupation,  birthplace, birthyear
 export dwelling, family
 
+export sickness, monthsunemployed
+export maritalstatus, relation
+
+export readable
+
 end # module ObsidianGenealogy

@@ -61,6 +61,12 @@ function occupation(rec::Census1850)
     rec.occupation
 end
 
+
+
+
+
+
+
 """Download and parse the 1850 US Census data for a given enumeration and year.
 $(SIGNATURES)
 """
