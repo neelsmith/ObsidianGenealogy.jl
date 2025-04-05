@@ -74,4 +74,7 @@ include("censuses/census1880.jl")
 export Census1880, census1880, census1880table
 
 
+export givenname, surname, gender, race, occupation,  birthplace, birthyear
+export dwelling, family
+
 end # module ObsidianGenealogy

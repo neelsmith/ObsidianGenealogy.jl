@@ -21,6 +21,46 @@ struct Census1850 <: CensusRecord
     enumeration::String
 end
 
+
+
+function dwelling(rec::Census1850)
+    rec.structure
+ end
+
+function family(rec::Census1850)
+    rec.family
+ end
+ 
+
+
+function givenname(rec::Census1850)
+    rec.givenname
+end
+function surname(rec::Census1850)
+    rec.surname
+end
+function birthyear(rec::Census1850)
+    rec.birthyear
+end
+
+function birthplace(rec::Census1850)
+    rec.birthplace
+ end 
+
+function gender(rec::Census1850)
+    rec.gender
+end
+
+
+
+function race(rec::Census1850)
+    rec.race
+end
+
+function occupation(rec::Census1850)
+    rec.occupation
+end
+
 """Download and parse the 1850 US Census data for a given enumeration and year.
 $(SIGNATURES)
 """
@@ -110,3 +150,6 @@ function census1850(delimited, enumeration::Symbol; delimiter = "|")
     end
     
 end
+
+
+

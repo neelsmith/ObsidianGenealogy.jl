@@ -28,6 +28,10 @@ function birthyear(rec::T) where T <: CensusRecord
    return nothing
 end 
 
+function birthplace(rec::T) where T <: CensusRecord
+    @warn("birthplace is not implemented for $(typeof(rec))")
+    return nothing
+ end 
 
 function gender(rec::T) where T <: CensusRecord
     @warn("gender is not implemented for $(typeof(rec))")
