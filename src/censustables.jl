@@ -47,4 +47,8 @@ function occupation(rec::T) where T <: CensusRecord
     return nothing
 end
 
+function hohlist(reclist::Vector{T}) where T <: CensusRecord
+    @warn("hoh is not implemented for $(typeof(reclist))")
+    return nothing
+end
 

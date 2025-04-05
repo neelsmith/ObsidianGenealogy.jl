@@ -86,6 +86,14 @@ function sickness(rec::Census1880)
     rec.sickness
 end
 
+
+
+function hohlist(reclist::Vector{Census1880})
+    # Get the head of household for each record
+    filter(r -> r.relation == "Self (Head)", reclist)
+end
+
+
 """Format a string with a readable summary of a complete 1880 census entry.
 $(SIGNATURES)
 """

@@ -80,6 +80,8 @@ export dwelling, family
 export sickness, monthsunemployed
 export maritalstatus, relation
 
+export hohlist
+
 export readable
 
 end # module ObsidianGenealogy
