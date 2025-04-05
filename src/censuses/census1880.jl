@@ -6,10 +6,10 @@ struct Census1880 <: CensusRecord
     dwelling::Int
     surname::String
     givenname::String
-    race::Union{Char, Nothing}
+    race::String
     gender::Union{Char, Nothing}
     age::Union{Int, Nothing}
-    birthyear::Int
+    birthyear::Union{Int, Nothing}
     relation::String
     marital::String
     marriedthisyear::Bool    
@@ -31,6 +31,76 @@ struct Census1880 <: CensusRecord
     enumeration::String
 end
 
+"""Format a string with a readable summary of a complete 1880 census entry.
+$(SIGNATURES)
+"""
+function readable(c::Census1880)
+        basic = string(
+            c.givenname, " ", c.surname,
+            ", ",
+            c.race, " ", c.gender, 
+            ", born ", c.birthyear, " in ", c.birthplace,
+            " (", c.age, " in 1880). ",
+  
+            "Role in household: ", c.relation, ". "
+        )
+        additions = []
+        if ! isempty(c.motherbirthplace)
+            push!(additions, "Mother born in $(c.motherbirthplace). ")
+        end
+        if ! isempty(c.fatherbirthplace)
+            push!(additions, "Father born in $(c.fatherbirthplace). ")
+        end
+
+
+        if !isempty(c.occupation)
+            push!(additions, "Occupation: " * c.occupation * ". ")
+        end
+        if c.monthsunemployed > 0
+            push!(additions, "Unemployed $(c.monthsunemployed) months. ")
+        end
+
+        if ! isempty(c.sick)
+            push!(additions, "Illness: $(c.sick). ")
+        end
+
+        if c.blind
+            push!(additions, "Blind. ")
+        end
+
+        if c.deaf_dumb
+            push!(additions, "Deaf and mute. ")
+        end
+
+        if c.idiotic
+            push!(additions, "'Idiotic'. ")
+        end
+
+        if c.insane
+            push!(additions, "Insane. ")
+        end
+
+        if c.maimed
+            push!(additions, "Maimed or disabled. ")
+        end
+
+
+        if c.attendedschool
+            push!(additions, "Attended school. ")
+        end
+
+        if c.cannotread
+            push!(additions, "Cannot read. ")
+        end
+        if c.cannotwrite
+            push!(additions, "Cannot write. ")
+        end
+
+        basic * join(additions, "")
+       
+end
+
+
 function census1880(delimited, enumeration::Symbol; delimiter = "|")
     cols = split(delimited, delimiter)
     if length(cols) < 27
@@ -41,7 +111,7 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
     #Street|Dwelling|Surname|GivenName|Race|Gender|Age|BirthMonth|BirthYear|Relation|Marital|MarriedThisYear|Occupation|MonthsUnemployed|Sick|Blind|DeafDumb|Idiotic|Insane|Maimed|AttendedSchool|CannotRead|CannotWrite|Birthplace|FatherBirthPlace|MotherBirthPlace
     (rownumber, street, dwellingraw,
     surname, givenname,
-    raceraw, genderraw,
+    race, genderraw,
     ageraw, birthmonth, birthyearraw,
     relation, marital, marriedthisyearraw, 
     occupation, monthsunemployedraw, 
@@ -70,8 +140,12 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
     catch e
         nothing
     end
-    gender = genderraw[1] in ['M', 'F'] ? genderraw[1] : nothing
-    race = raceraw[1] in ['W', 'B', 'M', 'I', 'C'] ? raceraw[1] : nothing
+    gender = if isempty(genderraw)
+        nothing
+    else
+            genderraw[1] in ['M', 'F'] ? genderraw[1] : nothing
+    end
+    #race = raceraw[1] in ['W', 'B', 'M', 'I', 'C'] ? raceraw[1] : nothing
    
     marriedthisyear = isempty(marriedthisyearraw) ? false : true
     attendedschool = isempty(attendedschoolraw) ? false : true
@@ -108,11 +182,10 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
                 birthplace, fatherbirthplace,
                 motherbirthplace,  
                 censuslabels[enumeration]
-                )=#
+                )
+=#
 
-
-
-      
+  
         Census1880(street, dwelling, 
         surname, givenname, 
         race, gender, age, birthyear,

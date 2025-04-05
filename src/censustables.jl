@@ -105,6 +105,7 @@ function census1850(delimited, enumeration::Symbol; delimiter = "|")
         illiterate, condition,
         censuslabels[enumeration]
         )
+      
     catch e
         @warn("Failed to parse census record: $delimited")
         return nothing
