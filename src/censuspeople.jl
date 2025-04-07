@@ -53,3 +53,53 @@ struct CensusPerson
         birthyear(record) == birthyear(p)
     end
  end
+
+
+ function housemates(p::T, records::Vector{T}) where T <: CensusRecord
+    filter(records) do rec
+        dwelling(p) == dwelling(rec)
+    end
+ end
+
+
+ function housemates(p::CensusPerson, records::Vector{T}) where T <: CensusRecord
+
+    personrecords = matchingrecords(p, records)
+    
+    if length(personrecords) == 1
+        filter(records) do rec
+            dwelling(personrecords[1]) == dwelling(rec)
+        end
+    else
+        @warn("For $(p), found multiple census records")
+    end
+ end
+
+
+ function relations(p::CensusPerson, records::Vector{Census1880}, people::Vector{CensusPerson})
+    rels = []
+    currenthead = nothing
+    for rec in housemates(p, records)
+        peopleids = matchingpeople(rec, people)
+        if length(peopleids) == 1
+            #@info("== Person $(peopleids[1])")
+        else
+            #@info("No unique person")
+        end
+        if ishoh(rec)
+            currenthead = peopleids[1]
+        else
+            relative = peopleids[1]
+    
+
+            if isempty(relation(rec))
+                @info("NOT related $relative")
+            else
+                pr = (hoh = currenthead, relative = relative, relation = lowercase(relation(rec)))
+                push!(rels, pr)
+            end
+        end
+    end
+   
+    rels
+end

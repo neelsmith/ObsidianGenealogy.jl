@@ -33,6 +33,17 @@ struct Census1880 <: CensusRecord
     line::Int
 end
 
+function show(io::IO, c::Census1880)
+    basic = string(
+            c.givenname, " ", c.surname,
+            ", ",
+            c.race, " ", c.gender, 
+            ", b. ", c.birthyear, " in ", c.birthplace, ". ",
+            " (Household $(c.dwelling))"
+           
+        )
+    print(io, basic)
+ end
 
 function enumeration(rec::Census1880)
     rec.enumeration
@@ -101,10 +112,13 @@ function sickness(rec::Census1880)
 end
 
 
+function ishoh(record::Census1880)
+    relation(record) == "Self (Head)"
+end
 
 function hohlist(reclist::Vector{Census1880})
     # Get the head of household for each record
-    filter(r -> r.relation == "Self (Head)", reclist)
+    filter(r -> ishoh(r), reclist)
 end
 
 

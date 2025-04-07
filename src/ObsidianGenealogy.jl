@@ -83,13 +83,13 @@ export dwelling, family
 export sickness, monthsunemployed
 export maritalstatus, relation
 
-export hohlist
+export ishoh, hohlist
 
 export readable
 
 
 include("censuspeople.jl")
 export CensusPerson
-export id, matchingrecords, matchingpeople
-
+export id, matchingrecords, matchingpeople, housemates
+export relations
 end # module ObsidianGenealogy
