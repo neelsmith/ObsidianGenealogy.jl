@@ -273,21 +273,6 @@ function census1880(delimited, enumeration::Symbol, page::Int; delimiter = "|")
     insane = isempty(insaneraw) ? false : true
     maimed = isempty(maimedraw) ? false : true
     try
-        #=
-                (street, dwelling, surname, givenname, race, 
-                gender, age, birthyear,relation, marital,
-                marriedthisyear,occupation,
-                monthsunemployed, sick,
-                blind, deaf_dumb,
-                idiotic, insane,
-                maimed, attendedschool,
-                cannotread, cannotwrite,
-                birthplace, fatherbirthplace,
-                motherbirthplace,  
-                censuslabels[enumeration]
-                )
-=#
-
         Census1880(street, dwelling, 
         surname, givenname, 
         race, gender, age, birthyear,
@@ -352,3 +337,4 @@ function census1880table(enumeration::Symbol; delimiter = "|")
     end
     filter(rec -> ! isnothing(rec), records)
 end
+

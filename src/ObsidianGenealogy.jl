@@ -90,6 +90,6 @@ export readable
 
 include("censuspeople.jl")
 export CensusPerson
-export id, matchingrecords, matchingpeople, housemates
+export id, person, matchingrecords, matchingpeople, housemates
 export relations
 end # module ObsidianGenealogy

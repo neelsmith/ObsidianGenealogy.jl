@@ -41,6 +41,15 @@ struct CensusPerson
     end
  end
 
+ function person(rec::CensusRecord, people::Vector{CensusPerson})
+    matches = matchingpeople(rec, people)
+    if length(matches) == 1
+        matches[1]
+    else
+        @warn("No unique match for person")
+        nothing
+    end
+ end
 
  function matchingpeople(record::T, people::Vector{CensusPerson}; strict = true) where T <: CensusRecord
     if ! strict
