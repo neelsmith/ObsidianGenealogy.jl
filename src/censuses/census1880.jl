@@ -132,7 +132,7 @@ function readable(c::Census1880)
             c.race, " ", c.gender, 
             ", born ", c.birthyear, " in ", c.birthplace,
             " (", c.age, " in 1880). ",
-            "Household $(c.dwelling). "
+            "Household $(dwelling(c)). "
            
         )
         additions = []

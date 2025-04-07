@@ -6,7 +6,6 @@ struct CensusPerson
     id::UUID
  end
  
- 
  function givenname(p::CensusPerson)
     p.givenname
  end
@@ -14,6 +13,7 @@ struct CensusPerson
     p.surname
  end
  function id(p::CensusPerson)
+    @info("Get idval for this person")
     p.id
  end
  function birthyear(p::CensusPerson)
@@ -31,35 +31,54 @@ struct CensusPerson
 
  function matchingrecords(p::CensusPerson, records::Vector{T}; strict = true) where T <: CensusRecord
     if ! strict
-        @warn("Fuzzy matching not yet implemented")
-    end
+        filter(records) do rec
+            givenname(rec)[1] == givenname(p)[1] &&
+            surname(rec) == surname(p) &&
+            birthyear(rec) == birthyear(p)
+        end
 
-    filter(records) do rec
-        givenname(rec) == givenname(p) &&
-        surname(rec) == surname(p) &&
-        birthyear(rec) == birthyear(p)
+    else
+
+        filter(records) do rec
+            givenname(rec) == givenname(p) &&
+            surname(rec) == surname(p) &&
+            birthyear(rec) == birthyear(p)
+        end
     end
  end
 
- function person(rec::CensusRecord, people::Vector{CensusPerson})
-    matches = matchingpeople(rec, people)
+ function person(rec::CensusRecord, people::Vector{CensusPerson}; strict = true)
+    matches = matchingpeople(rec, people; strict = strict)
     if length(matches) == 1
         matches[1]
+    elseif isempty(matches)
+        @debug("No matches for person (strict = $(strict))")
+        nothing
     else
-        @warn("No unique match for person")
+        @debug("Multiple matches for person")
         nothing
     end
  end
 
  function matchingpeople(record::T, people::Vector{CensusPerson}; strict = true) where T <: CensusRecord
     if ! strict
-        @warn("Fuzzy matching not yet implemented")
-    end
+        filter(people) do p
+            if !isempty(givenname(record)) && 
+                !isempty(givenname(p))
+                givenname(record)[1] == givenname(p)[1] &&
+                surname(record) == surname(p) &&
+                birthyear(record) == birthyear(p)
+            else 
+                false
+            end
+        end
 
-    filter(people) do p
-        givenname(record) == givenname(p) &&
-        surname(record) == surname(p) &&
-        birthyear(record) == birthyear(p)
+    else
+        filter(people) do p
+            givenname(record) == givenname(p) &&
+            surname(record) == surname(p) &&
+            birthyear(record) == birthyear(p)
+        end
     end
  end
 
@@ -99,11 +118,11 @@ struct CensusPerson
             currenthead = peopleids[1]
         else
             relative = peopleids[1]
-    
+            
 
             if isempty(relation(rec))
                 @info("NOT related $relative")
-            else
+            elseif relative == p
                 pr = (hoh = currenthead, relative = relative, relation = lowercase(relation(rec)))
                 push!(rels, pr)
             end
@@ -111,4 +130,26 @@ struct CensusPerson
     end
    
     rels
+end
+
+
+
+function vermonters()
+    url = "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/vermonters.cex"
+    f = Downloads.download(url)
+
+
+    folks = CensusPerson[]
+    for ln in readlines(f)[2:end]
+        (givenname, surname, yearraw, id) = split(ln, "|")
+        birthyear = try
+            parse(Int,yearraw)
+        catch
+            @warn("Couldn't parse year from $(yearraw)")
+            nothing
+        end
+        push!(folks, CensusPerson(givenname, surname, birthyear, UUID(id)))
+    end
+    rm(f)
+    folks
 end

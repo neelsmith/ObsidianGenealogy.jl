@@ -23,6 +23,19 @@ struct Census1850 <: CensusRecord
     line::Int
 end
 
+function show(io::IO, c::Census1850)
+    basic = string(
+            c.givenname, " ", c.surname,
+            ", ",
+            c.race, " ", c.gender, 
+            ", b. ", c.birthyear, " in ", c.birthplace, ". ",
+            " (Household $(dwelling(c)))"
+           
+        )
+    print(io, basic)
+ end
+
+
 function enumeration(rec::Census1850)
     rec.enumeration
 end

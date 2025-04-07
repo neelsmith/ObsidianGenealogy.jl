@@ -14,4 +14,19 @@ people = map(v1880) do rec
     )
 end
 
+vermontdir = joinpath(dirname(pwd()), "Vermont.jl")
+f = joinpath(vermontdir, "data", "vermonters.cex")
 
+isfile(f)
+
+folks = CensusPerson[]
+for ln in readlines(f)[2:end]
+    (givenname, surname, yearraw, id) = split(ln, "|")
+    birthyear = try
+        parse(Int,yearraw)
+    catch
+        @warn("Couldn't parse year from $(yearraw)")
+        nothing
+    end
+    push!(folks, CensusPerson(givenname, surname, birthyear, UUID(id)))
+end
