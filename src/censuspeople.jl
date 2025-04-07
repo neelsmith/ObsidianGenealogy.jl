@@ -40,3 +40,16 @@ struct CensusPerson
         birthyear(rec) == birthyear(p)
     end
  end
+
+
+ function matchingpeople(record::T, people::Vector{CensusPerson}; strict = true) where T <: CensusRecord
+    if ! strict
+        @warn("Fuzzy matching not yet implemented")
+    end
+
+    filter(people) do p
+        givenname(record) == givenname(p) &&
+        surname(record) == surname(p) &&
+        birthyear(record) == birthyear(p)
+    end
+ end
