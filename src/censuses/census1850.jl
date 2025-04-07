@@ -19,8 +19,21 @@ struct Census1850 <: CensusRecord
     illiterate::Bool
     condition::String
     enumeration::String
+    page::Int
+    line::Int
 end
 
+function enumeration(rec::Census1850)
+    rec.enumeration
+end
+
+function page(rec::Census1850)
+    rec.page
+end
+
+function line(rec::Census1850)
+    rec.line
+end
 
 
 function dwelling(rec::Census1850)
@@ -70,7 +83,7 @@ end
 """Download and parse the 1850 US Census data for a given enumeration and year.
 $(SIGNATURES)
 """
-function census1850table(enumeration::Symbol)
+function census1850table(enumeration::Symbol; delimiter = "|")
     # Read census data from a URL
     url = censusurl(enumeration, 1850)
     if isnothing(url)
@@ -79,10 +92,31 @@ function census1850table(enumeration::Symbol)
     end
 
     f = Downloads.download(url)
-    data = readlines(f)[2:end]
+    rawdata = readlines(f)[2:end]
     rm(f)
     # Parse each line into a Census1850 object
-    records = [census1850(line, enumeration) for line in data if !isempty(line)]
+    #records = [census1850(line, enumeration) for line in data if !isempty(line)]
+    #filter(rec -> ! isnothing(rec), records)
+    data = filter(ln -> ! isempty(ln), rawdata)
+    #records = [census1880(line, enumeration) for line in data if !isempty(line)]
+
+    records = Census1850[]
+    currpage = 1
+    prevline = 0
+    for line in data
+        cols = split(line, delimiter)
+        currline = try 
+             parse(Int, cols[1])
+        catch e 
+            @warn("Failed to parse line number: $rownumber")
+            nothing
+        end
+        if ! isnothing(currline) && currline <= prevline
+            currpage = currpage + 1
+        end
+        push!(records, census1850(line, enumeration, currpage))
+        prevline = currline
+    end
     filter(rec -> ! isnothing(rec), records)
 end
 
@@ -90,7 +124,7 @@ end
 
 $(SIGNATURES)
 """
-function census1850(delimited, enumeration::Symbol; delimiter = "|")
+function census1850(delimited, enumeration::Symbol, page::Int; delimiter = "|")
     # Parse the delimited string into a Census1850 object
     cols = split(delimited, delimiter)
     if length(cols) < 17
@@ -108,7 +142,12 @@ function census1850(delimited, enumeration::Symbol; delimiter = "|")
     marriedthisyearraw, attendedschoolraw,
     illiterateraw, condition) = cols
 
-    
+    line = try 
+        parse(Int, rownumber)
+    catch e
+        @warn("Failed to parse line number: $rownumber")
+        nothing
+    end
     structure = try 
         parse(Int, structraw)
     catch e
@@ -147,7 +186,7 @@ function census1850(delimited, enumeration::Symbol; delimiter = "|")
         age, birthyear, gender, race, occupation, industry,
         realesate, birthplace, marriedthisyear, attendedschool,
         illiterate, condition,
-        censuslabels[enumeration]
+        censuslabels[enumeration], page, line
         )
       
     catch e

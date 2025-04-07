@@ -2,10 +2,12 @@ module ObsidianGenealogy
 
 import Base: show
 
+
+
 using Obsidian
 using Documenter, DocStringExtensions
 using Dates
-
+using UUIDs
 using Downloads
 
 using Tyler
@@ -74,6 +76,7 @@ include("censuses/census1880.jl")
 export Census1880, census1880, census1880table
 
 
+
 export givenname, surname, gender, race, occupation,  birthplace, birthyear
 export dwelling, family
 
@@ -83,5 +86,10 @@ export maritalstatus, relation
 export hohlist
 
 export readable
+
+
+include("censuspeople.jl")
+export CensusPerson
+export matchingrecords
 
 end # module ObsidianGenealogy

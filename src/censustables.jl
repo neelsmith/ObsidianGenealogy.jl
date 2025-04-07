@@ -1,5 +1,6 @@
 abstract type CensusRecord end
 
+
 function enumeration(rec::T) where T <: CensusRecord
     @warn("enumeration is not implemented for $(typeof(rec))")
     return nothing
