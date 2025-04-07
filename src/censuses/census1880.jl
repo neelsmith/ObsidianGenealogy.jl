@@ -1,5 +1,5 @@
 
-
+"""Data model of a record in 1880 US Federal Census."""
 struct Census1880 <: CensusRecord
     #Street|Dwelling|Surname|GivenName|Race|Gender|Age|BirthMonth|BirthYear|Relation|Marital|MarriedThisYear|Occupation|MonthsUnemployed|Sick|Blind|DeafDumb|Idiotic|Insane|Maimed|AttendedSchool|CannotRead|CannotWrite|Birthplace|FatherBirthPlace|MotherBirthPlace
     street::String
@@ -33,6 +33,18 @@ struct Census1880 <: CensusRecord
     line::Int
 end
 
+
+function enumeration(rec::Census1880)
+    rec.enumeration
+end
+
+function page(rec::Census1880)
+    rec.page
+end
+
+function line(rec::Census1880)
+    rec.line
+end
 
 function dwelling(rec::Census1880)
     rec.dwelling
