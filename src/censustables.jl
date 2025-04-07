@@ -1,5 +1,22 @@
 abstract type CensusRecord end
 
+function enumeration(rec::T) where T <: CensusRecord
+    @warn("enumeration is not implemented for $(typeof(rec))")
+    return nothing
+ end
+
+ function page(rec::T) where T <: CensusRecord
+    @warn("page is not implemented for $(typeof(rec))")
+    return nothing
+ end
+
+
+ function line(rec::T) where T <: CensusRecord
+    @warn("line is not implemented for $(typeof(rec))")
+    return nothing
+ end
+
+
 function dwelling(rec::T) where T <: CensusRecord
     @warn("dwelling is not implemented for $(typeof(rec))")
     return nothing

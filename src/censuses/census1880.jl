@@ -29,6 +29,8 @@ struct Census1880 <: CensusRecord
     motherbirthplace::String
     # The enumeration is the name of the census district
     enumeration::String
+    page::Int
+    line::Int
 end
 
 
@@ -170,7 +172,7 @@ end
 """Parse a single 1880 census record from a row of delimited-text data.
 $(SIGNATURES)
 """
-function census1880(delimited, enumeration::Symbol; delimiter = "|")
+function census1880(delimited, enumeration::Symbol, page::Int; delimiter = "|")
     cols = split(delimited, delimiter)
     if length(cols) < 27
         @warn("Invalid number of columns in census record: $delimited")
@@ -192,6 +194,12 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
     motherbirthplace) = cols
 
 
+    line = try 
+        parse(Int, rownumber)
+    catch e 
+        @warn("Failed to parse line number: $rownumber")
+        nothing
+    end
     dwelling = try 
         parse(Int, dwellingraw)
     catch e
@@ -265,7 +273,7 @@ function census1880(delimited, enumeration::Symbol; delimiter = "|")
         cannotread, cannotwrite,
         birthplace, fatherbirthplace,
         motherbirthplace,  
-        censuslabels[enumeration]
+        censuslabels[enumeration], page, line
         )
 
     catch e
@@ -280,7 +288,7 @@ end
 """Download and parse the 1880 US Census data for a given enumeration and year.
 $(SIGNATURES)
 """
-function census1880table(enumeration::Symbol)
+function census1880table(enumeration::Symbol; delimiter = "|")
     # Read census data from a URL
     url = censusurl(enumeration, 1880)
     if isnothing(url)
@@ -289,9 +297,32 @@ function census1880table(enumeration::Symbol)
     end
 
     f = Downloads.download(url)
-    data = readlines(f)[2:end]
+    rawdata = readlines(f)[2:end]
     rm(f)
     # Parse each line into a Census1880 object
-    records = [census1880(line, enumeration) for line in data if !isempty(line)]
+    data = filter(ln -> ! isempty(ln), rawdata)
+    #records = [census1880(line, enumeration) for line in data if !isempty(line)]
+
+    records = Census1880[]
+    currpage = 1
+    prevline = 0
+    for line in data
+        cols = split(line, delimiter)
+        currline = try 
+             parse(Int, cols[1])
+        catch e 
+            @warn("Failed to parse line number: $rownumber")
+            nothing
+        end
+
+        #@warn("Compare $(currline) to $(prevline)")
+        if ! isnothing(currline) && currline <= prevline
+            currpage = currpage + 1
+        end
+        push!(records, census1880(line, enumeration, currpage))
+        prevline = currline
+        #@info("Page/line $(currpage)/$(currline)")
+        
+    end
     filter(rec -> ! isnothing(rec), records)
 end
