@@ -95,7 +95,8 @@ struct CensusPerson
 
  function housemates(p::T, records::Vector{T}) where T <: CensusRecord
     filter(records) do rec
-        dwelling(p) == dwelling(rec)
+        dwelling(p) == dwelling(rec) &&
+        enumeration(p) == enumeration(rec)
     end
  end
 
