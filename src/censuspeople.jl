@@ -150,7 +150,8 @@ function vermonters()
 
 
     folks = CensusPerson[]
-    for ln in readlines(f)[2:end]
+    data = filter(ln -> ! isempty(ln), readlines(f)[2:end])
+    for ln in data
         (givenname, surname, gender, yearraw, id) = split(ln, "|")
         birthyear = try
             parse(Int,yearraw)

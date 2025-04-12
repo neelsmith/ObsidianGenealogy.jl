@@ -27,7 +27,7 @@ end
 currhead = nothing
 for p in v1880
     if  relation(p) == "Self (Head)"
-        currhead = p
+        global currhead = p
         println("\nHead of household:\n\t" * readable(p))
     elseif ! isempty(p.relation)
 
