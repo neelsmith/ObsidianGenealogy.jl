@@ -2,10 +2,16 @@
 struct CensusPerson
     givenname::String
     surname::String
+    gender::Union{Char,Nothing}
     birthyear::Union{Int, Nothing}
     id::UUID
  end
  
+
+ function gender(p::CensusPerson)
+    p.gender
+ end
+
  function givenname(p::CensusPerson)
     p.givenname
  end
@@ -21,7 +27,7 @@ struct CensusPerson
  end
  
  function delimited(rec::CensusPerson; delimiter = "|")
-    return join([rec.givenname, rec.surname, rec.birthyear, rec.id], delimiter)
+    return join([rec.givenname, rec.surname, rec.gender, rec.birthyear, rec.id], delimiter)
  end
  
  function show(io::IO, p::CensusPerson)
@@ -34,6 +40,7 @@ struct CensusPerson
         filter(records) do rec
             givenname(rec)[1] == givenname(p)[1] &&
             surname(rec) == surname(p) &&
+            gender(rec) == gender(p) &&
             birthyear(rec) == birthyear(p)
         end
 
@@ -42,6 +49,7 @@ struct CensusPerson
         filter(records) do rec
             givenname(rec) == givenname(p) &&
             surname(rec) == surname(p) &&
+            gender(rec) == gender(p) &&
             birthyear(rec) == birthyear(p)
         end
     end
@@ -67,6 +75,7 @@ struct CensusPerson
                 !isempty(givenname(p))
                 givenname(record)[1] == givenname(p)[1] &&
                 surname(record) == surname(p) &&
+                gender(record)  == gender(p) &&
                 birthyear(record) == birthyear(p)
             else 
                 false
@@ -77,6 +86,7 @@ struct CensusPerson
         filter(people) do p
             givenname(record) == givenname(p) &&
             surname(record) == surname(p) &&
+            gender(record) == gender(p) &&
             birthyear(record) == birthyear(p)
         end
     end
@@ -141,14 +151,14 @@ function vermonters()
 
     folks = CensusPerson[]
     for ln in readlines(f)[2:end]
-        (givenname, surname, yearraw, id) = split(ln, "|")
+        (givenname, surname, gender, yearraw, id) = split(ln, "|")
         birthyear = try
             parse(Int,yearraw)
         catch
             @warn("Couldn't parse year from $(yearraw)")
             nothing
         end
-        push!(folks, CensusPerson(givenname, surname, birthyear, UUID(id)))
+        push!(folks, CensusPerson(givenname, surname, gender[1], birthyear, UUID(id)))
     end
     rm(f)
     folks

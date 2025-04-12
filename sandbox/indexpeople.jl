@@ -9,6 +9,7 @@ people = map(v1880) do rec
    CensusPerson(
         rec.givenname,
         rec.surname,
+        rec.gender,
         rec.birthyear,
         UUIDs.uuid4()
     )
@@ -21,12 +22,12 @@ isfile(f)
 
 folks = CensusPerson[]
 for ln in readlines(f)[2:end]
-    (givenname, surname, yearraw, id) = split(ln, "|")
+    (givenname, surname, gender, yearraw, id) = split(ln, "|")
     birthyear = try
         parse(Int,yearraw)
     catch
         @warn("Couldn't parse year from $(yearraw)")
         nothing
     end
-    push!(folks, CensusPerson(givenname, surname, birthyear, UUID(id)))
+    push!(folks, CensusPerson(givenname, surname, gender[1], birthyear, UUID(id)))
 end

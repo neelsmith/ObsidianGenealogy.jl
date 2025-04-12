@@ -1,17 +1,33 @@
 
 censusurls = Dict(
+    :addison1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Addison1880census.cex",
+
+
+    :bridport1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1880census.cex",
+
     :ferrisburg1850 =>"https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1850census.cex",
+    :ferrisburg1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1880census.cex",
+
+
+    :panton1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Panton1880census.cex",
+
 
 
     :vergennes1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Vergennes1850census.cex",
     :vergennes1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Vergennes1880census.cex",
 
 
-    :panton1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Panton1880census.cex"
+
+
+
+
+
 )
 
 
 censuslabels = Dict(
+    :addison => "Addison, Addison, Vermont",
+    :bridport => "Bridport, Addison, Vermont",
     :ferrisburg => "Ferrisburg, Addison, Vermont",
     :panton => "Panton, Addison, Vermont",
     :vergennes => "Vergennes, Addison, Vermont"
@@ -19,10 +35,28 @@ censuslabels = Dict(
 
 
 function censusurl(enumeration::Symbol, year::Int)
-
-    if enumeration == :ferrisburg
+    if enumeration == :addison
+        if year == 1880
+            return censusurls[:addison1880]
+        else
+            @warn("No URL found for enumeration: $enumeration and year: $year")
+            return nothing
+        end
+  
+    elseif enumeration == :bridport
+        if year == 1880
+            return censusurls[:bridport1880]
+        else
+            @warn("No URL found for enumeration: $enumeration and year: $year")
+            return nothing
+        end
+  
+        
+    elseif enumeration == :ferrisburg
         if year == 1850
             return censusurls[:ferrisburg1850]
+        elseif year == 1880
+            return censusurls[:ferrisburg1880]
         else
             @warn("No URL found for enumeration: $enumeration and year: $year")
             return nothing
