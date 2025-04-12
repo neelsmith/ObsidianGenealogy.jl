@@ -1,14 +1,18 @@
 
 censusurls = Dict(
+    :addison1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Addison1850census.cex",
     :addison1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Addison1880census.cex",
 
 
+
+    :bridport1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1850census.cex",
     :bridport1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1880census.cex",
 
     :ferrisburg1850 =>"https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1850census.cex",
     :ferrisburg1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1880census.cex",
 
 
+    :panton1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Panton1850census.cex",
     :panton1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Panton1880census.cex",
 
 
@@ -38,6 +42,8 @@ function censusurl(enumeration::Symbol, year::Int)
     if enumeration == :addison
         if year == 1880
             return censusurls[:addison1880]
+        elseif year == 1850
+            return censusurls[:addison1850]
         else
             @warn("No URL found for enumeration: $enumeration and year: $year")
             return nothing
@@ -46,6 +52,8 @@ function censusurl(enumeration::Symbol, year::Int)
     elseif enumeration == :bridport
         if year == 1880
             return censusurls[:bridport1880]
+        elseif year == 1850
+            return censusurls[:bridport1850]
         else
             @warn("No URL found for enumeration: $enumeration and year: $year")
             return nothing
@@ -65,6 +73,8 @@ function censusurl(enumeration::Symbol, year::Int)
     elseif enumeration == :panton
         if year == 1880
             return censusurls[:panton1880]
+        elseif year == 1850
+            return censusurls[:panton1850]
         else
             @warn("No URL found for enumeration: $enumeration and year: $year")
             return nothing
