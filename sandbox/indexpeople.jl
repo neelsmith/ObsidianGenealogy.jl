@@ -1,33 +1,29 @@
 using ObsidianGenealogy, Obsidian 
 using UUIDs
-
-
 # Base indexing on 1880 records.
-v1880 = census1880table(:vergennes)
-
-people = map(v1880) do rec
-   CensusPerson(
-        rec.givenname,
-        rec.surname,
-        rec.gender,
-        rec.birthyear,
-        UUIDs.uuid4()
-    )
-end
-
-vermontdir = joinpath(dirname(pwd()), "Vermont.jl")
-f = joinpath(vermontdir, "data", "vermonters.cex")
-
-isfile(f)
-
-folks = CensusPerson[]
-for ln in readlines(f)[2:end]
-    (givenname, surname, gender, yearraw, id) = split(ln, "|")
-    birthyear = try
-        parse(Int,yearraw)
-    catch
-        @warn("Couldn't parse year from $(yearraw)")
-        nothing
+#enumlist = [
+#    "Addison, Addison, Vermont",
+#    "Bridport, Addison, Vermont",
+#    "Ferrisburg, Addison, Vermont"
+#]
+#censuslabels
+for district in [:addison, :bridport, :ferrisburg]
+    label = ObsidianGenealogy.censuslabels[district]
+    @info(label)
+    records = census1880table(district)
+    people = map(records) do rec
+        CensusPerson(
+             rec.givenname,
+             rec.surname,
+             rec.gender,
+             rec.birthyear,
+             UUIDs.uuid4()
+         )
     end
-    push!(folks, CensusPerson(givenname, surname, gender[1], birthyear, UUID(id)))
+    rawfile = string(district, "-raw.cex")
+    open(rawfile, "w") do io
+        write(io, join(delimited.(people), "\n") )
+    end
+
 end
+
