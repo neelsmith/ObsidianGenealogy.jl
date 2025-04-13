@@ -66,7 +66,7 @@ export timeline
 
 include("censusvault.jl")
 export uscensusnotes, uscensusevents
-export address, enumeration, date,addresslocation
+export address, date,addresslocation
 
 include("censusio.jl")
 include("censustables.jl")
@@ -75,7 +75,9 @@ export Census1850, census1850, census1850table
 include("censuses/census1880.jl")
 export Census1880, census1880, census1880table
 
-
+export enumeration, page, line, reference
+export record
+export censuslabels
 
 export givenname, surname, gender, race, occupation,  birthplace, birthyear
 export dwelling, family

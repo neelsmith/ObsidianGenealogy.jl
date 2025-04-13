@@ -1,6 +1,46 @@
 abstract type CensusRecord end
 
 
+
+
+function reference(rec::CensusRecord)
+   string(enumeration(rec), ", ", censusyear(rec),
+   ", page ",
+   page(rec), ", line ", line(rec) )
+end
+
+
+function censusyear(rec::T) where T <: CensusRecord
+   @warn("page is not implemented for $(typeof(rec))")
+    return nothing
+end
+
+
+function record(district, yr::Int, pg::Int, ln::Int, v::Vector{T}) where T <: CensusRecord
+   annual = filter(r -> censusyear(r) ==yr, v)
+   record(district, pg, ln, annual)
+end
+
+
+function record(district, pg::Int, ln::Int, v::Vector{T}) where T <: CensusRecord
+
+   matches = filter(v) do rec
+      page(rec) == pg &&
+      line(rec)  == ln &&
+      enumeration(rec) == district
+   end
+   if length(matches) == 1
+      matches[1]
+   elseif isempty(matches)
+      @warn("No record matching page $(pg) line $(ln) in enumeration $(district).")
+      nothing
+   else
+      @warn("Matched more than one record for page $(pg) line $(ln) in enumeration $(district).")
+      nothing
+   end
+end
+
+
 function enumeration(rec::T) where T <: CensusRecord
     @warn("enumeration is not implemented for $(typeof(rec))")
     return nothing

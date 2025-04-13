@@ -33,6 +33,11 @@ struct Census1880 <: CensusRecord
     line::Int
 end
 
+
+function censusyear(c::Census1880)
+    1880
+end
+
 function show(io::IO, c::Census1880)
     basic = string(
             c.givenname, " ", c.surname,

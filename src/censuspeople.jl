@@ -144,7 +144,6 @@ struct CensusPerson
 end
 
 
-
 function vermonters()
     url = "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/vermonters.cex"
     f = Downloads.download(url)
