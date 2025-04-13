@@ -72,6 +72,10 @@ include("censusio.jl")
 include("censustables.jl")
 include("censuses/census1850.jl")
 export Census1850, census1850, census1850table
+include("censuses/census1860.jl")
+export Census1860, census1860, census1860table
+include("censuses/census1870.jl")
+export Census1870, census1870, census1870table
 include("censuses/census1880.jl")
 export Census1880, census1880, census1880table
 
