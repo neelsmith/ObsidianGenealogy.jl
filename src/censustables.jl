@@ -1,8 +1,6 @@
 abstract type CensusRecord end
 
 
-
-
 function reference(rec::CensusRecord)
    string(enumeration(rec), ", ", censusyear(rec),
    ", page ",
