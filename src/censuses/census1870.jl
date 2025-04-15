@@ -104,27 +104,11 @@ function occupation(rec::Census1870)
     rec.occupation
 end
 
-
-
-
-"""Download and parse the 1870 US Census data for a given enumeration and year.
-$(SIGNATURES)
-"""
-function census1870table(enumeration::Symbol; delimiter = "|")
-    # Read census data from a URL
-    url = censusurl(enumeration, 1870)
-    if isnothing(url)
-        @warn("No URL found for enumeration: $enumeration and year: $year")
-        return nothing
-    end
-
-    f = Downloads.download(url)
-    rawdata = readlines(f)[2:end]
-    rm(f)
-    # Parse each line into a Census1870 object
+function census1870table(datalines::Vector{String}, enumeration::Symbol; delimiter = "|")
+     # Parse each line into a Census1870 object
     #records = [census1870(line, enumeration) for line in data if !isempty(line)]
     #filter(rec -> ! isnothing(rec), records)
-    data = filter(ln -> ! isempty(ln), rawdata)
+    data = filter(ln -> ! isempty(ln), datalines)
     #records = [census1880(line, enumeration) for line in data if !isempty(line)]
 
     records = Census1870[]
@@ -146,6 +130,27 @@ function census1870table(enumeration::Symbol; delimiter = "|")
     end
     filter(rec -> ! isnothing(rec), records)
 end
+
+
+"""Download and parse the 1870 US Census data for a given enumeration and year.
+$(SIGNATURES)
+"""
+function census1870table(enumeration::Symbol; delimiter = "|")
+    # Read census data from a URL
+    url = censusurl(enumeration, 1870)
+    if isnothing(url)
+        @warn("No URL found for enumeration: $enumeration and year: $year")
+        return nothing
+    end
+
+    f = Downloads.download(url)
+    rawdata = readlines(f)[2:end]
+    rm(f)
+    census1870table(rawdata, enumeration; delimiter = delimiter)
+end
+
+   
+
 
 
 
