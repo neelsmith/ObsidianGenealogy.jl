@@ -9,6 +9,7 @@ censusurls = Dict(
 
     :bridport1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1850census.cex",
     :bridport1860 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1860census.cex",
+    :bridport1870 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1870census.cex",
     :bridport1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1880census.cex",
 
     :ferrisburg1850 =>"https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1850census.cex",
@@ -65,6 +66,8 @@ function censusurl(enumeration::Symbol, year::Int)
             return censusurls[:bridport1850]
         elseif year == 1860
             return censusurls[:bridport1860]
+        elseif year == 1870
+            return censusurls[:bridport1870]
         else
             @warn("No URL found for enumeration: $enumeration and year: $year")
             return nothing
@@ -112,3 +115,5 @@ function censusurl(enumeration::Symbol, year::Int)
         return nothing
     end
 end
+
+
