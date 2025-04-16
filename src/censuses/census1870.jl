@@ -104,6 +104,12 @@ function occupation(rec::Census1870)
     rec.occupation
 end
 
+
+
+function census1870table(filename::String, enumeration::Symbol; delimiter = "|")
+    census1870table(readlines(filename), enumeration; delimiter = delimiter)
+end
+
 function census1870table(datalines::Vector{String}, enumeration::Symbol; delimiter = "|")
      # Parse each line into a Census1870 object
     #records = [census1870(line, enumeration) for line in data if !isempty(line)]
@@ -119,7 +125,7 @@ function census1870table(datalines::Vector{String}, enumeration::Symbol; delimit
         currline = try 
              parse(Int, cols[1])
         catch e 
-            @warn("Failed to parse line number: $rownumber")
+            @warn("Failed to parse line on page $(currpage): $line ")
             nothing
         end
         if ! isnothing(currline) && currline <= prevline

@@ -13,6 +13,7 @@ censusurls = Dict(
     :bridport1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Bridport1880census.cex",
 
     :ferrisburg1850 =>"https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1850census.cex",
+    :ferrisburg1870 =>"https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1870census.cex",
     :ferrisburg1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Ferrisburg1880census.cex",
 
 
@@ -77,6 +78,8 @@ function censusurl(enumeration::Symbol, year::Int)
     elseif enumeration == :ferrisburg
         if year == 1850
             return censusurls[:ferrisburg1850]
+        elseif year == 1870
+            return censusurls[:ferrisburg1870]
         elseif year == 1880
             return censusurls[:ferrisburg1880]
         else
