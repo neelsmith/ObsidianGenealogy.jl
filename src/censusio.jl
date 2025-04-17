@@ -25,6 +25,7 @@ censusurls = Dict(
 
 
     :vergennes1850 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Vergennes1850census.cex",
+    :vergennes1870 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Vergennes1870census.cex",
     :vergennes1880 => "https://raw.githubusercontent.com/neelsmith/Vermont.jl/refs/heads/main/data/Vergennes1880census.cex",
 
 
@@ -104,6 +105,8 @@ function censusurl(enumeration::Symbol, year::Int)
     elseif enumeration == :vergennes
         if year == 1850
             return censusurls[:vergennes1850]
+        elseif year == 1870
+            return censusurls[:vergennes1870]
         elseif year == 1880
             return censusurls[:vergennes1880]
         else
