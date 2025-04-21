@@ -94,27 +94,12 @@ end
 
 
 
+function census1860table(datalines::Vector{String}, enumeration::Symbol; delimiter = "|")
 
-
-
-"""Download and parse the 1860 US Census data for a given enumeration and year.
-$(SIGNATURES)
-"""
-function census1860table(enumeration::Symbol; delimiter = "|")
-    # Read census data from a URL
-    url = censusurl(enumeration, 1860)
-    if isnothing(url)
-        @warn("No URL found for enumeration: $enumeration and year: $year")
-        return nothing
-    end
-
-    f = Downloads.download(url)
-    rawdata = readlines(f)[2:end]
-    rm(f)
     # Parse each line into a Census1860 object
     #records = [census1860(line, enumeration) for line in data if !isempty(line)]
     #filter(rec -> ! isnothing(rec), records)
-    data = filter(ln -> ! isempty(ln), rawdata)
+    data = filter(ln -> ! isempty(ln), datalines)
     #records = [census1880(line, enumeration) for line in data if !isempty(line)]
 
     records = Census1860[]
@@ -135,6 +120,28 @@ function census1860table(enumeration::Symbol; delimiter = "|")
         prevline = currline
     end
     filter(rec -> ! isnothing(rec), records)
+end
+
+function census1860table(filename::String, enumeration::Symbol; delimiter = "|")
+    census1860table(readlines(filename), enumeration; delimiter = delimiter)
+end
+
+
+"""Download and parse the 1860 US Census data for a given enumeration and year.
+$(SIGNATURES)
+"""
+function census1860table(enumeration::Symbol; delimiter = "|")
+    # Read census data from a URL
+    url = censusurl(enumeration, 1860)
+    if isnothing(url)
+        @warn("No URL found for enumeration: $enumeration and year: $year")
+        return nothing
+    end
+
+    f = Downloads.download(url)
+    rawdata = readlines(f)[2:end]
+    rm(f)
+    census1860table(rawdata, enumeration; delimiter = delimiter)
 end
 
 """Read a single record for the 1860 US Census from a delimited string.
@@ -199,13 +206,19 @@ function census1860(delimited, enumeration::Symbol, page::Int; delimiter = "|")
     illiterate = isempty(illiterateraw) ? false : true
 
     try
-        Census1860(structure, family, givenname, surname, 
+        (structure, family, givenname, surname, 
         age, birthyear, gender, race, occupation, industry,
         realesate, birthplace, marriedthisyear, attendedschool,
         illiterate, condition,
         censuslabels[enumeration], page, line
         )
-      
+       #= Census1860(structure, family, givenname, surname, 
+        age, birthyear, gender, race, occupation, industry,
+        realesate, birthplace, marriedthisyear, attendedschool,
+        illiterate, condition,
+        censuslabels[enumeration], page, line
+        )
+      =#
     catch e
         @warn("Failed to parse census record: $delimited")
         return nothing
